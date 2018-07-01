@@ -1,0 +1,7 @@
+@import "~bootstrap/dist/css/bootstrap.css";
+
+body {
+    background-color: rgb(50, 50, 50);
+    font-family: Caladea;
+    color: aliceblue;
+}
