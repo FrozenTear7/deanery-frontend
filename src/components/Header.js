@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router-dom'
 
 class Header extends Component {
   render () {
@@ -16,10 +17,19 @@ class Header extends Component {
               </li>
             </ul>
           </div>
+          {localStorage.getItem('userId') &&
+          <div>
+            Signed in as: {localStorage.getItem('name')}
+            <button onClick={() => {
+              this.props.history.push('/signin')
+              localStorage.removeItem('userId')
+            }}>Sign out
+            </button>
+          </div>}
         </nav>
       </div>
     )
   }
 }
 
-export default Header
+export default withRouter(Header)

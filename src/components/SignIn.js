@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 
 class SignIn extends Component {
   constructor (props) {
@@ -12,8 +12,7 @@ class SignIn extends Component {
       userList: [],
       loading: false,
       error: null,
-      activeUser: null,
-      signedIn: false
+      activeUser: null
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -38,21 +37,23 @@ class SignIn extends Component {
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data)
-        if (!data.error)
+        if (!data.error) {
+          localStorage.setItem('userId', data._id)
+          localStorage.setItem('name', data.name + data.surname)
           this.setState({
             signInValues: {
               index: '',
               password: ''
             },
-            loading: false,
-            signedIn: true
+            loading: false
           })
-        else
+          this.props.history.push('/')
+        } else {
           this.setState({
             error: data,
             loading: false
           })
+        }
       })
 
     e.preventDefault()
@@ -78,10 +79,9 @@ class SignIn extends Component {
           </label>
           <br/><input className='btn btn-success' type='submit' value='Submit'/>
         </form>
-        {this.state.signedIn && <Link to="/">Go to main panel</Link>}
       </div>
     )
   }
 }
 
-export default SignIn
+export default withRouter(SignIn)
