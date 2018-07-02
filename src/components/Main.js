@@ -4,6 +4,7 @@ import Users from './Users'
 import Panel from './Panel'
 import NotFound from './NotFound'
 import Subjects from './Subjects'
+import SignIn from './SignIn'
 
 class Main extends Component {
   render () {
@@ -13,6 +14,7 @@ class Main extends Component {
           <Route exact path='/' component={Panel}/>
           <Route path='/users' component={Users}/>
           <Route path='/subjects' component={Subjects}/>
+          <Route path='/signin' component={SignIn}/>
           <Route path='/' component={NotFound}/>
         </Switch>
       </div>
