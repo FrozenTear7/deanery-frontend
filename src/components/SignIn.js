@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 
 class SignIn extends Component {
   constructor (props) {
@@ -11,7 +12,8 @@ class SignIn extends Component {
       userList: [],
       loading: false,
       error: null,
-      activeUser: null
+      activeUser: null,
+      signedIn: false
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -34,14 +36,23 @@ class SignIn extends Component {
       },
       body: JSON.stringify(this.state.signInValues)
     })
-      .then(() => {
-        this.fetchUsers()
-        this.setState({
-          signInValues: {
-            index: '',
-            password: ''
-          }
-        })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        if (!data.error)
+          this.setState({
+            signInValues: {
+              index: '',
+              password: ''
+            },
+            loading: false,
+            signedIn: true
+          })
+        else
+          this.setState({
+            error: data,
+            loading: false
+          })
       })
 
     e.preventDefault()
@@ -67,6 +78,7 @@ class SignIn extends Component {
           </label>
           <br/><input className='btn btn-success' type='submit' value='Submit'/>
         </form>
+        {this.state.signedIn && <Link to="/">Go to main panel</Link>}
       </div>
     )
   }

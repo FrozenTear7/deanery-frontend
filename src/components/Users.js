@@ -20,7 +20,6 @@ class Users extends Component {
       },
       userList: [],
       loading: false,
-      error: null,
       activeUser: null
     }
 
