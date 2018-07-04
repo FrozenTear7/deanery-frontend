@@ -9,15 +9,15 @@ class Header extends Component {
           <a className="navbar-brand" href="/">Navbar</a>
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
-              <li className="nav-item">
+              {!localStorage.getItem('isStudent') && <li className="nav-item">
                 <a className="nav-link" href="/users">Users</a>
-              </li>
+              </li>}
               <li className="nav-item">
                 <a className="nav-link" href="/profile">Profile</a>
               </li>
-              <li className="nav-item">
+              {!localStorage.getItem('isStudent') && <li className="nav-item">
                 <a className="nav-link" href="/subjects">Subjects</a>
-              </li>
+              </li>}
             </ul>
           </div>
           {localStorage.getItem('userId') &&
@@ -26,6 +26,8 @@ class Header extends Component {
             <button onClick={() => {
               this.props.history.push('/signin')
               localStorage.removeItem('userId')
+              localStorage.removeItem('isStudent')
+              localStorage.removeItem('name')
             }}>Sign out
             </button>
           </div>}

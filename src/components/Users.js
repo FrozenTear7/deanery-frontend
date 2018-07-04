@@ -156,7 +156,6 @@ class Users extends Component {
   }
 
   render () {
-    console.log(this.state.users)
     if (this.state.loading)
       return (
         <div>LOADING...</div>
