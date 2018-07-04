@@ -9,14 +9,16 @@ class Users extends Component {
         surname: '',
         index: '',
         isStudent: true,
-        password: ''
+        password: '',
+        email: ''
       },
       updateValues: {
         name: '',
         surname: '',
         index: '',
         isStudent: true,
-        password: ''
+        password: '',
+        email: ''
       },
       userList: [],
       loading: false,
@@ -72,6 +74,7 @@ class Users extends Component {
           index: user.index,
           isStudent: user.isStudent,
           password: user.password,
+          email: user.email,
         }
       })
     else
@@ -109,7 +112,8 @@ class Users extends Component {
             surname: '',
             index: '',
             isStudent: true,
-            password: ''
+            password: '',
+            email: ''
           }
         })
       })
@@ -141,7 +145,8 @@ class Users extends Component {
             surname: '',
             index: '',
             isStudent: true,
-            password: ''
+            password: '',
+            email: ''
           },
           activeUser: false
         })
@@ -151,6 +156,7 @@ class Users extends Component {
   }
 
   render () {
+    console.log(this.state.users)
     if (this.state.loading)
       return (
         <div>LOADING...</div>
@@ -169,6 +175,7 @@ class Users extends Component {
                     <h4>Name: {user.name}</h4>
                     <h4>Surname: {user.surname}</h4>
                     <h4>Index: {user.index}</h4>
+                    <h4>Email: {user.email}</h4>
                     <h4>Password: {user.password}</h4>
                     {user.isStudent && <h4>Is a student</h4>}
                     <button onClick={() => this.deleteUser(user._id)} className='btn btn-danger'>X</button>
@@ -186,6 +193,9 @@ class Users extends Component {
                              onChange={this.handleChangeUpdate}/><br/>
                       Index:
                       <input className='form-control' id='index' type='text' value={this.state.updateValues.index}
+                             onChange={this.handleChangeUpdate}/><br/>
+                      Email:
+                      <input className='form-control' id='email' type='text' value={this.state.updateValues.email}
                              onChange={this.handleChangeUpdate}/><br/>
                       Student:
                       <select className='form-control' id='isStudent' value={this.state.updateValues.isStudent}
@@ -215,6 +225,9 @@ class Users extends Component {
                      onChange={this.handleChangePost}/><br/>
               Index:
               <input className='form-control' id='index' type='text' value={this.state.postValues.index}
+                     onChange={this.handleChangePost}/><br/>
+              Email:
+              <input className='form-control' id='email' type='text' value={this.state.postValues.email}
                      onChange={this.handleChangePost}/><br/>
               Student:
               <select className='form-control' id='isStudent' value={this.state.postValues.isStudent}

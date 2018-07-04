@@ -6,6 +6,7 @@ import NotFound from './NotFound'
 import Subjects from './Subjects'
 import SignIn from './SignIn'
 import PrivateRoute from './PrivateRoute'
+import Profile from './Profile'
 
 class Main extends Component {
   render () {
@@ -14,6 +15,7 @@ class Main extends Component {
         <Switch>
           <PrivateRoute exact path='/' component={Panel}/>
           <PrivateRoute path='/users' component={Users}/>
+          <PrivateRoute path='/profile' component={Profile}/>
           <PrivateRoute path='/subjects' component={Subjects}/>
           <Route path='/signin' component={SignIn}/>
           <Route path='/' component={NotFound}/>

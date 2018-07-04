@@ -39,7 +39,7 @@ class SignIn extends Component {
       .then(data => {
         if (!data.error) {
           localStorage.setItem('userId', data._id)
-          localStorage.setItem('name', data.name + data.surname)
+          localStorage.setItem('name', data.name + ' ' + data.surname)
           this.setState({
             signInValues: {
               index: '',
