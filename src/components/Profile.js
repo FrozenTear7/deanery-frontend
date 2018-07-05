@@ -59,10 +59,16 @@ class Profile extends Component {
         {this.state.user.grades && <div className='col col-8 center'>
           <h2>Grades:</h2>
           <ul className='list-group'>
-            {this.state.user.grades.map(grade =>
-              <li className='list-group-item list-group-item-info' key={grade._id}>
-                <h4>Subject: {grade.subject.name}</h4>
-                <h4>Grade: {grade.value}</h4>
+            {this.state.user.subjects.map(subject =>
+              <li className='list-group-item list-group-item-info' key={subject._id}>
+                <h4>Subject: {subject.name}</h4>
+                <h4>Grades:</h4>
+                <ul className='list-group'>
+                  {this.state.user.grades.filter(grade => grade.subject._id === subject._id).map(grade =>
+                    <li className='list-group-item list-group-item-info' key={grade._id}>
+                      <h4>Grade: {grade.value}</h4>
+                    </li>)}
+                </ul>
               </li>)}
           </ul>
         </div>}
