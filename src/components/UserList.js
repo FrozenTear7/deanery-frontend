@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import fetchWithToken from '../helpers/fetchWithToken'
 
 class UserList extends Component {
   constructor (props) {
@@ -32,7 +33,7 @@ class UserList extends Component {
   fetchUsers = () => {
     this.setState({loading: true})
 
-    fetch(`http://localhost:3001/${this.props.mode}`, {
+    fetchWithToken(`http://localhost:3001/${this.props.mode}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -49,7 +50,7 @@ class UserList extends Component {
   deleteUser (id) {
     this.setState({loading: true})
 
-    fetch(`http://localhost:3001/${this.props.mode}/${id}`, {
+    fetchWithToken(`http://localhost:3001/${this.props.mode}/${id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
@@ -93,7 +94,7 @@ class UserList extends Component {
   handleSubmitPost (e) {
     this.setState({loading: true})
 
-    fetch(`http://localhost:3001/${this.props.mode}`, {
+    fetchWithToken(`http://localhost:3001/${this.props.mode}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -125,7 +126,7 @@ class UserList extends Component {
   handleSubmitUpdate (e) {
     this.setState({loading: true})
 
-    fetch(`http://localhost:3001/${this.props.mode}/${this.state.activeUser}`, {
+    fetchWithToken(`http://localhost:3001/${this.props.mode}/${this.state.activeUser}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',

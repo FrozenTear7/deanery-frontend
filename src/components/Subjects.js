@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import fetchWithToken from '../helpers/fetchWithToken'
 
 class Subjects extends Component {
   constructor (props) {
@@ -24,7 +25,7 @@ class Subjects extends Component {
   fetchSubjects = () => {
     this.setState({loading: true})
 
-    fetch('http://localhost:3001/subjects', {
+    fetchWithToken('http://localhost:3001/subjects', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -41,7 +42,7 @@ class Subjects extends Component {
   deleteSubject (id) {
     this.setState({loading: true})
 
-    fetch(`http://localhost:3001/subjects/${id}`, {
+    fetchWithToken(`http://localhost:3001/subjects/${id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
@@ -80,7 +81,7 @@ class Subjects extends Component {
   handleSubmitPost (e) {
     this.setState({loading: true})
 
-    fetch('http://localhost:3001/subjects', {
+    fetchWithToken('http://localhost:3001/subjects', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -108,7 +109,7 @@ class Subjects extends Component {
   handleSubmitUpdate (e) {
     this.setState({loading: true})
 
-    fetch(`http://localhost:3001/subjects/${this.state.activeSubject}`, {
+    fetchWithToken(`http://localhost:3001/subjects/${this.state.activeSubject}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',

@@ -52,9 +52,10 @@ class SignIn extends Component {
       .then(response => response.json())
       .then(data => {
         if (!data.error) {
-          localStorage.setItem('userId', data._id)
+          localStorage.setItem('userId', data.id)
           localStorage.setItem('userMode', String(this.state.signinMode))
-          localStorage.setItem('name', data.name + ' ' + data.surname)
+          localStorage.setItem('name', data.name)
+          localStorage.setItem('token', data.token)
           this.setState({
             signInValues: {
               index: '',

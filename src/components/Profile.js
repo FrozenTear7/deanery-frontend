@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import fetchWithToken from '../helpers/fetchWithToken'
 
 class Profile extends Component {
   constructor (props) {
@@ -22,7 +23,7 @@ class Profile extends Component {
         break
     }
 
-    fetch(`${signinUrl}/${localStorage.getItem('userId')}`, {
+    fetchWithToken(`${signinUrl}/${localStorage.getItem('userId')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
