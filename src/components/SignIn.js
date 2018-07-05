@@ -12,7 +12,8 @@ class SignIn extends Component {
       userList: [],
       loading: false,
       error: null,
-      activeUser: null
+      activeUser: null,
+      signinMode: 0
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -26,7 +27,20 @@ class SignIn extends Component {
   handleSubmit (e) {
     this.setState({loading: true})
 
-    fetch('http://localhost:3001/signin', {
+    let signinUrl
+    switch (this.state.signinMode) {
+      case 2:
+        signinUrl = 'http://localhost:3001/signin/admin'
+        break
+      case 1:
+        signinUrl = 'http://localhost:3001/signin/teacher'
+        break
+      default:
+        signinUrl = 'http://localhost:3001/signin/student'
+        break
+    }
+
+    fetch(signinUrl, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -39,7 +53,7 @@ class SignIn extends Component {
       .then(data => {
         if (!data.error) {
           localStorage.setItem('userId', data._id)
-          localStorage.setItem('isStudent', data.isStudent)
+          localStorage.setItem('userMode', String(this.state.signinMode))
           localStorage.setItem('name', data.name + ' ' + data.surname)
           this.setState({
             signInValues: {
@@ -80,6 +94,17 @@ class SignIn extends Component {
           </label>
           <br/><input className='btn btn-success' type='submit' value='Submit'/>
         </form>
+        <ul>
+          <li>
+            <button onClick={() => {this.setState({signinMode: 0})}}>Student</button>
+          </li>
+          <li>
+            <button onClick={() => {this.setState({signinMode: 1})}}>Teacher</button>
+          </li>
+          <li>
+            <button onClick={() => {this.setState({signinMode: 2})}}>Admin (Not available)</button>
+          </li>
+        </ul>
       </div>
     )
   }

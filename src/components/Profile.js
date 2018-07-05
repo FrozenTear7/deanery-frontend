@@ -12,7 +12,17 @@ class Profile extends Component {
   fetchUser = () => {
     this.setState({loading: true})
 
-    fetch(`http://localhost:3001/users/${localStorage.getItem('userId')}`, {
+    let signinUrl
+    switch (localStorage.getItem('userMode')) {
+      case 1:
+        signinUrl = 'http://localhost:3001/teachers'
+        break
+      default:
+        signinUrl = 'http://localhost:3001/students'
+        break
+    }
+
+    fetch(`${signinUrl}/${localStorage.getItem('userId')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -45,7 +55,6 @@ class Profile extends Component {
           <h4>Index: {this.state.user.index}</h4>
           <h4>Email: {this.state.user.email}</h4>
           <h4>Password: {this.state.user.password}</h4>
-          {this.state.user.isStudent && <h4>Is a student</h4>}
         </div>
         {this.state.user.grades && <div className='col col-8 center'>
           <h2>Grades:</h2>
