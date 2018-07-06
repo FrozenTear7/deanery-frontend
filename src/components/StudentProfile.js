@@ -6,7 +6,7 @@ class StudentProfile extends Component {
     super(props)
     this.state = {
       user: {},
-      loading: false
+      loading: false,
     }
   }
 
@@ -17,8 +17,8 @@ class StudentProfile extends Component {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'access-control-allow-origin': '*'
-      }
+        'access-control-allow-origin': '*',
+      },
     })
       .then(response => {
         response.json().then(data => {
@@ -40,12 +40,19 @@ class StudentProfile extends Component {
     return (
       <div className='row'>
         <div className='col col-4 center'>
-          <h5>Id: {this.state.user._id}</h5>
-          <h4>Name: {this.state.user.name}</h4>
-          <h4>Surname: {this.state.user.surname}</h4>
-          <h4>Index: {this.state.user.index}</h4>
-          <h4>Email: {this.state.user.email}</h4>
-          <h4>Password: {this.state.user.password}</h4>
+          <div className='row'>
+            <div className='col col-6 center'>
+              <h5>Id: {this.state.user._id}</h5>
+              <h4>Name: {this.state.user.name}</h4>
+              <h4>Surname: {this.state.user.surname}</h4>
+              <h4>Index: {this.state.user.index}</h4>
+              <h4>Email: {this.state.user.email}</h4>
+              <h4>Password: {this.state.user.password}</h4>
+            </div>
+            <div className='col col-6 center'>
+              {this.state.user.avatar && <img className='avatar' alt='Avatar' src={this.state.user.avatar}/>}
+            </div>
+          </div>
         </div>
         {this.state.user.grades && <div className='col col-8 center'>
           <h2>Grades:</h2>

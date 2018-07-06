@@ -218,6 +218,30 @@ class Subjects extends Component {
                   teacherListDelete: [...this.state.updateValues.teacherListDelete, user]
                 }
               })}>X</button>}
+              {mode === 'deleteStudentRevert' && <button onClick={() => this.setState({
+                updateValues: {
+                  ...this.state.updateValues,
+                  studentListDelete: this.state.updateValues.studentListDelete.filter(student => student._id !== user._id)
+                }
+              })}>X</button>}
+              {mode === 'deleteTeacherRevert' && <button onClick={() => this.setState({
+                updateValues: {
+                  ...this.state.updateValues,
+                  teacherListDelete: this.state.updateValues.teacherListDelete.filter(teacher => teacher._id !== user._id)
+                }
+              })}>X</button>}
+              {mode === 'addStudentRevert' && <button onClick={() => this.setState({
+                updateValues: {
+                  ...this.state.updateValues,
+                  studentListAdd: this.state.updateValues.studentListAdd.filter(student => student._id !== user._id)
+                }
+              })}>X</button>}
+              {mode === 'addTeacherRevert' && <button onClick={() => this.setState({
+                updateValues: {
+                  ...this.state.updateValues,
+                  teacherListAdd: this.state.updateValues.teacherListAdd.filter(teacher => teacher._id !== user._id)
+                }
+              })}>X</button>}
             </li>
           )
         })}
@@ -274,7 +298,7 @@ class Subjects extends Component {
                       </div>
                       <div className='col col-1 center'>
                         Students to delete:
-                        {this.renderUsers(this.state.updateValues.studentListDelete)}
+                        {this.renderUsers(this.state.updateValues.studentListDelete, 'deleteStudentRevert')}
                       </div>
                       <div className='col col-1 center'>
                         Students:
@@ -283,7 +307,7 @@ class Subjects extends Component {
                       </div>
                       <div className='col col-1 center'>
                         Students to add:
-                        {this.renderUsers(this.state.updateValues.studentListAdd)}
+                        {this.renderUsers(this.state.updateValues.studentListAdd, 'addStudentRevert')}
                       </div>
                       <div className='col col-1 center'>
                         Teachers
@@ -294,7 +318,7 @@ class Subjects extends Component {
                       </div>
                       <div className='col col-1 center'>
                         Teachers to delete:
-                        {this.renderUsers(this.state.updateValues.teacherListDelete)}
+                        {this.renderUsers(this.state.updateValues.teacherListDelete, 'deleteTeacherRevert')}
                       </div>
                       <div className='col col-1 center'>
                         Teachers:
@@ -303,7 +327,7 @@ class Subjects extends Component {
                       </div>
                       <div className='col col-1 center'>
                         Teachers to add:
-                        {this.renderUsers(this.state.updateValues.teacherListAdd)}
+                        {this.renderUsers(this.state.updateValues.teacherListAdd, 'addTeacherRevert')}
                       </div>
                     </div>
                   </div>

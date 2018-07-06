@@ -10,14 +10,16 @@ class UserList extends Component {
         surname: '',
         index: '',
         password: '',
-        email: ''
+        email: '',
+        avatar: '',
       },
       updateValues: {
         name: '',
         surname: '',
         index: '',
         password: '',
-        email: ''
+        email: '',
+        avatar: '',
       },
       userList: [],
       loading: false,
@@ -37,8 +39,8 @@ class UserList extends Component {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'access-control-allow-origin': '*'
-      }
+        'access-control-allow-origin': '*',
+      },
     })
       .then(response => {
         response.json().then(data => {
@@ -54,12 +56,12 @@ class UserList extends Component {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
-        'access-control-allow-origin': '*'
-      }
+        'access-control-allow-origin': '*',
+      },
     })
       .then(() => {
           this.fetchUsers()
-        }
+        },
       )
   }
 
@@ -73,14 +75,14 @@ class UserList extends Component {
           index: user.index,
           password: user.password,
           email: user.email,
-        }
+          avatar: user.avatar,
+        },
       })
     else
       this.setState({
-          activeUser: null
-        }
+          activeUser: null,
+        },
       )
-
   }
 
   componentDidMount () {
@@ -99,9 +101,9 @@ class UserList extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'access-control-allow-origin': '*'
+        'access-control-allow-origin': '*',
       },
-      body: JSON.stringify(this.state.postValues)
+      body: JSON.stringify(this.state.postValues),
     })
       .then(() => {
         this.fetchUsers()
@@ -111,8 +113,9 @@ class UserList extends Component {
             surname: '',
             index: '',
             password: '',
-            email: ''
-          }
+            email: '',
+            avatar: '',
+          },
         })
       })
 
@@ -131,9 +134,9 @@ class UserList extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'access-control-allow-origin': '*'
+        'access-control-allow-origin': '*',
       },
-      body: JSON.stringify(this.state.updateValues)
+      body: JSON.stringify(this.state.updateValues),
     })
       .then(() => {
         this.setState({
@@ -142,9 +145,9 @@ class UserList extends Component {
             surname: '',
             index: '',
             password: '',
-            email: ''
+            email: '',
           },
-          activeUser: null
+          activeUser: null,
         })
         this.fetchUsers()
       })
@@ -165,12 +168,19 @@ class UserList extends Component {
           {this.state.userList.map(user => {
             return (
               this.state.activeUser !== user._id ? <li className='list-group-item list-group-item-info' key={user._id}>
-                <h5>Id: {user._id}</h5>
-                <h4>Name: {user.name}</h4>
-                <h4>Surname: {user.surname}</h4>
-                <h4>Index: {user.index}</h4>
-                <h4>Email: {user.email}</h4>
-                <h4>Password: {user.password}</h4>
+                <div className='row'>
+                  <div className='col col-6 center'>
+                    <h5>Id: {user._id}</h5>
+                    <h4>Name: {user.name}</h4>
+                    <h4>Surname: {user.surname}</h4>
+                    <h4>Index: {user.index}</h4>
+                    <h4>Email: {user.email}</h4>
+                    <h4>Password: {user.password}</h4>
+                  </div>
+                  <div className='col col-6 center'>
+                    {user.avatar && <img className='avatar' alt='Avatar' src={user.avatar}/>}
+                  </div>
+                </div>
                 <button onClick={() => this.deleteUser(user._id)} className='btn btn-danger'>X</button>
                 <button onClick={() => this.editUser(user)} className='btn btn-info'>Edit</button>
               </li> : <form onSubmit={this.handleSubmitUpdate}>
@@ -191,6 +201,9 @@ class UserList extends Component {
                          onChange={this.handleChangeUpdate}/>
                   Email:
                   <input className='form-control' id='email' type='text' value={this.state.updateValues.email}
+                         onChange={this.handleChangeUpdate}/>
+                  Avatar:
+                  <input className='form-control' id='avatar' type='text' value={this.state.updateValues.avatar}
                          onChange={this.handleChangeUpdate}/>
                 </label>
                 <br/><input className='btn btn-success' type='submit' value='Submit'/>
@@ -218,6 +231,9 @@ class UserList extends Component {
             Email:
             <input className='form-control' id='email' type='text' value={this.state.postValues.email}
                    onChange={this.handleChangePost}/>
+            Avatar:
+            <input className='form-control' id='avatar' type='text' value={this.state.updateValues.avatar}
+                   onChange={this.handleChangeUpdate}/>
           </label>
           <br/><input className='btn btn-success' type='submit' value='Submit'/>
         </form>
