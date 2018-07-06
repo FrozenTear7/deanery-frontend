@@ -6,7 +6,8 @@ import NotFound from './NotFound'
 import Subjects from './Subjects'
 import SignIn from './SignIn'
 import PrivateRoute from './PrivateRoute'
-import Profile from './Profile'
+import StudentProfile from './StudentProfile'
+import TeacherProfile from './TeacherProfile'
 
 class Main extends Component {
   render () {
@@ -15,7 +16,8 @@ class Main extends Component {
         <Switch>
           <PrivateRoute exact path='/' component={Panel}/>
           <PrivateRoute path='/users' component={Users}/>
-          <PrivateRoute path='/profile' component={Profile}/>
+          {localStorage.getItem('userMode') === '0' && <PrivateRoute path='/profile' component={StudentProfile}/>}
+          {localStorage.getItem('userMode') === '1' && <PrivateRoute path='/profile' component={TeacherProfile}/>}
           <PrivateRoute path='/subjects' component={Subjects}/>
           <Route path='/signin' component={SignIn}/>
           <Route path='/' component={NotFound}/>

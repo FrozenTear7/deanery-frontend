@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import fetchWithToken from '../helpers/fetchWithToken'
 
-class Profile extends Component {
+class TeacherProfile extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -13,17 +13,7 @@ class Profile extends Component {
   fetchUser = () => {
     this.setState({loading: true})
 
-    let signinUrl
-    switch (localStorage.getItem('userMode')) {
-      case 1:
-        signinUrl = 'http://localhost:3001/teachers'
-        break
-      default:
-        signinUrl = 'http://localhost:3001/students'
-        break
-    }
-
-    fetchWithToken(`${signinUrl}/${localStorage.getItem('userId')}`, {
+    fetchWithToken(`http://localhost:3001/teachers/${localStorage.getItem('userId')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -47,6 +37,8 @@ class Profile extends Component {
         <div>LOADING...</div>
       )
 
+    console.log(this.state.user)
+
     return (
       <div className='row'>
         <div className='col col-4 center'>
@@ -68,6 +60,7 @@ class Profile extends Component {
                   {this.state.user.grades.filter(grade => grade.subject._id === subject._id).map(grade =>
                     <li className='list-group-item list-group-item-info' key={grade._id}>
                       <h4>Grade: {grade.value}</h4>
+                      <h4>Note: {grade.note}</h4>
                     </li>)}
                 </ul>
               </li>)}
@@ -78,4 +71,4 @@ class Profile extends Component {
   }
 }
 
-export default Profile
+export default TeacherProfile
