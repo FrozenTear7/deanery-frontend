@@ -1,0 +1,28 @@
+@import "~bootstrap/dist/css/bootstrap.css";
+
+body {
+    background-color: rgb(50, 50, 50);
+    font-family: Caladea;
+    color: aliceblue;
+}
+
+.center {
+    text-align: center;
+}
+
+.avatar {
+    width: 150px;
+    height: 150px;
+    background-size: cover;
+    background-position: top center;
+    border-radius: 50%;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.jumbotron {
+    background-color: #cdecff;
+    color: #080243;
+}
