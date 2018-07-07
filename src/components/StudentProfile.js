@@ -14,7 +14,7 @@ class StudentProfile extends Component {
   fetchUser = () => {
     this.setState({loading: true})
 
-    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/students/${localStorage.getItem('userId')}`, {
+    fetchWithToken(`http://localhost:3001/students/${localStorage.getItem('userId')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',

@@ -32,7 +32,7 @@ class TeacherProfile extends Component {
   fetchUser = () => {
     this.setState({loading: true})
 
-    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/teachers/${localStorage.getItem('userId')}`, {
+    fetchWithToken(`http://localhost:3001/teachers/${localStorage.getItem('userId')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -59,7 +59,7 @@ class TeacherProfile extends Component {
       loading: true,
     })
 
-    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/grades`, {
+    fetchWithToken(`http://localhost:3001/grades`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -97,7 +97,7 @@ class TeacherProfile extends Component {
       loading: true,
     })
 
-    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/grades/${this.state.activeGrade}`, {
+    fetchWithToken(`http://localhost:3001/grades/${this.state.activeGrade}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -169,7 +169,7 @@ class TeacherProfile extends Component {
   deleteGrade (id) {
     this.setState({loading: true})
 
-    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/grades/${id}`, {
+    fetchWithToken(`http://localhost:3001/grades/${id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
