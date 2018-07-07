@@ -17,3 +17,12 @@ body {
     background-position: top center;
     border-radius: 50%;
 }
+
+ul {
+    list-style-type: none;
+}
+
+.jumbotron {
+    background-color: #cdecff;
+    color: #080243;
+}

@@ -9,6 +9,7 @@ class TeacherProfile extends Component {
       postValues: {
         value: '',
         note: '',
+        type: '1',
         student: '',
         subject: '',
       },
@@ -70,6 +71,7 @@ class TeacherProfile extends Component {
           postValues: {
             value: '',
             note: '',
+            type: '1',
             student: '',
             subject: '',
           },
@@ -95,6 +97,22 @@ class TeacherProfile extends Component {
       )
   }
 
+  deleteGrade (id) {
+    this.setState({loading: true})
+
+    fetchWithToken(`http://localhost:3001/grades/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json',
+        'access-control-allow-origin': '*',
+      },
+    })
+      .then(() => {
+          this.fetchUser()
+        },
+      )
+  }
+
   render () {
     if (this.state.loading)
       return (
@@ -105,7 +123,7 @@ class TeacherProfile extends Component {
 
     return (
       <div className='row'>
-        <div className='col col-4 center'>
+        <div className='col col-6 center'>
           <div className='row'>
             <div className='col col-6 center'>
               <h5>Id: {this.state.user._id}</h5>
@@ -120,24 +138,27 @@ class TeacherProfile extends Component {
             </div>
           </div>
         </div>
-        {this.state.user.subjects && <div className='col col-8 center'>
+        {this.state.user.subjects && <div className='col col-6 center'>
           <h2>Subjects:</h2>
           <ul className='list-group'>
             {this.state.user.subjects.map(subject =>
-              <li className='list-group-item list-group-item-info' key={subject._id}>
+              <li className='list-group-item list-group-item-dark' key={subject._id}>
                 <h4>Subject: {subject.name}</h4>
                 <h4>Students:</h4>
                 <ul className='list-group'>
                   {subject.students.map(student =>
-                    <li className='list-group-item list-group-item-info' key={student._id}>
+                    <li className='list-group-item list-group-item-secondary' key={student._id}>
                       <h4>Name: {student.name}</h4>
                       <h4>Surname: {student.name}</h4>
                       <h4>Index: {student.index}</h4>
                       <ul className='list-group'>
                         {student.grades.filter(grade => grade.subject === subject._id).map(grade =>
-                          <li className='list-group-item list-group-item-info' key={grade._id}>
+                          <li className='list-group-item list-group-item-secondary' key={grade._id}>
                             <h4>Grade: {grade.value}</h4>
                             <h4>Note: {grade.note}</h4>
+                            {grade.type === 1 && <h4>Type: normal</h4>}
+                            {grade.type === 2 && <h4>Type: final</h4>}
+                            <button className='btn btn-danger' onClick={() => this.deleteGrade(grade._id)}>X</button>
                           </li>)}
                       </ul>
                       {(this.state.activeSubject === subject._id && this.state.activeStudent === student._id) ?
@@ -151,6 +172,13 @@ class TeacherProfile extends Component {
                             <input className='form-control' id='note' type='text'
                                    value={this.state.postValues.note}
                                    onChange={this.handleChange}/>
+                            Type:
+                            <select className='form-control' id='type'
+                                    value={this.state.postValues.type}
+                                    onChange={this.handleChange}>
+                              <option value='1'>Normal</option>
+                              <option value='2'>Final</option>
+                            </select>
                           </label>
                           <br/><input className='btn btn-success' type='submit' value='Submit'/>
                         </form> :

@@ -7,20 +7,20 @@ class Subjects extends Component {
     super(props)
     this.state = {
       postValues: {
-        name: ''
+        name: '',
       },
       updateValues: {
         name: '',
         teacherListAdd: [],
         studentListAdd: [],
         teacherListDelete: [],
-        studentListDelete: []
+        studentListDelete: [],
       },
       subjectList: [],
       studentList: [],
       teacherList: [],
       loading: false,
-      activeSubject: null
+      activeSubject: null,
     }
 
     this.handleChangePost = this.handleChangePost.bind(this)
@@ -36,8 +36,8 @@ class Subjects extends Component {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'access-control-allow-origin': '*'
-      }
+        'access-control-allow-origin': '*',
+      },
     })
       .then(response => {
         response.json().then(data => {
@@ -53,8 +53,8 @@ class Subjects extends Component {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'access-control-allow-origin': '*'
-      }
+        'access-control-allow-origin': '*',
+      },
     })
       .then(response => {
         response.json().then(data => {
@@ -70,8 +70,8 @@ class Subjects extends Component {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'access-control-allow-origin': '*'
-      }
+        'access-control-allow-origin': '*',
+      },
     })
       .then(response => {
         response.json().then(data => {
@@ -87,12 +87,12 @@ class Subjects extends Component {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
-        'access-control-allow-origin': '*'
-      }
+        'access-control-allow-origin': '*',
+      },
     })
       .then(() => {
           this.fetchSubjects()
-        }
+        },
       )
   }
 
@@ -105,14 +105,14 @@ class Subjects extends Component {
           teacherListAdd: [],
           studentListAdd: [],
           teacherListDelete: [],
-          studentListDelete: []
+          studentListDelete: [],
 
-        }
+        },
       })
     else
       this.setState({
-          activeSubject: null
-        }
+          activeSubject: null,
+        },
       )
   }
 
@@ -134,16 +134,16 @@ class Subjects extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'access-control-allow-origin': '*'
+        'access-control-allow-origin': '*',
       },
-      body: JSON.stringify(this.state.postValues)
+      body: JSON.stringify(this.state.postValues),
     })
       .then(() => {
         this.fetchSubjects()
         this.setState({
           postValues: {
             name: '',
-          }
+          },
         })
       })
 
@@ -162,9 +162,9 @@ class Subjects extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'access-control-allow-origin': '*'
+        'access-control-allow-origin': '*',
       },
-      body: JSON.stringify(this.state.updateValues)
+      body: JSON.stringify(this.state.updateValues),
     })
       .then(() => {
         this.fetchSubjects()
@@ -174,9 +174,9 @@ class Subjects extends Component {
             teacherListAdd: [],
             studentListAdd: [],
             teacherListDelete: [],
-            studentListDelete: []
+            studentListDelete: [],
           },
-          activeSubject: false
+          activeSubject: false,
         })
       })
 
@@ -190,57 +190,60 @@ class Subjects extends Component {
       <ul className='list-group'>
         {users.map(user => {
           return (
-            <li className='list-group-item list-group-item-info' key={user._id}>
+            <li
+              className='list-group-item list-group-item-dark'
+              key={user._id}
+            >
               <h4>{user.name}</h4>
               <h4>{user.surname}</h4>
               <h4>{user.index}</h4>
-              {mode === 'addStudent' && <button onClick={() => this.setState({
+              {mode === 'addStudent' && <button className='btn btn-danger' onClick={() => this.setState({
                 updateValues: {
                   ...this.state.updateValues,
-                  studentListAdd: [...this.state.updateValues.studentListAdd, user]
-                }
+                  studentListAdd: [...this.state.updateValues.studentListAdd, user],
+                },
               })}>Add</button>}
-              {mode === 'addTeacher' && <button onClick={() => this.setState({
+              {mode === 'addTeacher' && <button className='btn btn-danger' onClick={() => this.setState({
                 updateValues: {
                   ...this.state.updateValues,
-                  teacherListAdd: [...this.state.updateValues.teacherListAdd, user]
-                }
+                  teacherListAdd: [...this.state.updateValues.teacherListAdd, user],
+                },
               })}>Add</button>}
-              {mode === 'deleteStudent' && <button onClick={() => this.setState({
+              {mode === 'deleteStudent' && <button className='btn btn-danger' onClick={() => this.setState({
                 updateValues: {
                   ...this.state.updateValues,
-                  studentListDelete: [...this.state.updateValues.studentListDelete, user]
-                }
+                  studentListDelete: [...this.state.updateValues.studentListDelete, user],
+                },
               })}>X</button>}
-              {mode === 'deleteTeacher' && <button onClick={() => this.setState({
+              {mode === 'deleteTeacher' && <button className='btn btn-danger' onClick={() => this.setState({
                 updateValues: {
                   ...this.state.updateValues,
-                  teacherListDelete: [...this.state.updateValues.teacherListDelete, user]
-                }
+                  teacherListDelete: [...this.state.updateValues.teacherListDelete, user],
+                },
               })}>X</button>}
-              {mode === 'deleteStudentRevert' && <button onClick={() => this.setState({
+              {mode === 'deleteStudentRevert' && <button className='btn btn-danger' onClick={() => this.setState({
                 updateValues: {
                   ...this.state.updateValues,
-                  studentListDelete: this.state.updateValues.studentListDelete.filter(student => student._id !== user._id)
-                }
+                  studentListDelete: this.state.updateValues.studentListDelete.filter(student => student._id !== user._id),
+                },
               })}>X</button>}
-              {mode === 'deleteTeacherRevert' && <button onClick={() => this.setState({
+              {mode === 'deleteTeacherRevert' && <button className='btn btn-danger' onClick={() => this.setState({
                 updateValues: {
                   ...this.state.updateValues,
-                  teacherListDelete: this.state.updateValues.teacherListDelete.filter(teacher => teacher._id !== user._id)
-                }
+                  teacherListDelete: this.state.updateValues.teacherListDelete.filter(teacher => teacher._id !== user._id),
+                },
               })}>X</button>}
-              {mode === 'addStudentRevert' && <button onClick={() => this.setState({
+              {mode === 'addStudentRevert' && <button className='btn btn-danger' onClick={() => this.setState({
                 updateValues: {
                   ...this.state.updateValues,
-                  studentListAdd: this.state.updateValues.studentListAdd.filter(student => student._id !== user._id)
-                }
+                  studentListAdd: this.state.updateValues.studentListAdd.filter(student => student._id !== user._id),
+                },
               })}>X</button>}
-              {mode === 'addTeacherRevert' && <button onClick={() => this.setState({
+              {mode === 'addTeacherRevert' && <button className='btn btn-danger' onClick={() => this.setState({
                 updateValues: {
                   ...this.state.updateValues,
-                  teacherListAdd: this.state.updateValues.teacherListAdd.filter(teacher => teacher._id !== user._id)
-                }
+                  teacherListAdd: this.state.updateValues.teacherListAdd.filter(teacher => teacher._id !== user._id),
+                },
               })}>X</button>}
             </li>
           )
@@ -263,7 +266,7 @@ class Subjects extends Component {
             {this.state.subjectList.map(subject => {
               return (
                 this.state.activeSubject !== subject._id ?
-                  <li className='list-group-item list-group-item-info' key={subject._id}>
+                  <li className='list-group-item list-group-item-dark' key={subject._id}>
                     <h5>Id: {subject._id}</h5>
                     <h4>Name: {subject.name}</h4>
                     <button onClick={() => this.deleteSubject(subject._id)} className='btn btn-danger'>X</button>
@@ -336,6 +339,7 @@ class Subjects extends Component {
           </ul>
         </div>
         <div className='col col-2 center'>
+          <h3>Add new subject:</h3>
           <form onSubmit={this.handleSubmitPost}>
             <label>
               Name:
