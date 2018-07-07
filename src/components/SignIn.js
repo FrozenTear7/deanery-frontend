@@ -63,7 +63,7 @@ class SignIn extends Component {
             },
             loading: false
           })
-          this.props.history.push('/')
+          this.props.history.push('/deanery-frontend/')
         } else {
           this.setState({
             error: data,

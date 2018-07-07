@@ -14,12 +14,12 @@ class Main extends Component {
     return (
       <div className='container-fluid'>
         <Switch>
-          <PrivateRoute exact path='/' component={Panel}/>
-          <PrivateRoute path='/users' component={Users}/>
-          {localStorage.getItem('userMode') === '0' && <PrivateRoute path='/profile' component={StudentProfile}/>}
-          {localStorage.getItem('userMode') === '1' && <PrivateRoute path='/profile' component={TeacherProfile}/>}
-          <PrivateRoute path='/subjects' component={Subjects}/>
-          <Route path='/signin' component={SignIn}/>
+          <PrivateRoute exact path='/deanery-frontend/' component={Panel}/>
+          <PrivateRoute path='/deanery-frontend/users' component={Users}/>
+          {localStorage.getItem('userMode') === '0' && <PrivateRoute path='/deanery-frontend/profile' component={StudentProfile}/>}
+          {localStorage.getItem('userMode') === '1' && <PrivateRoute path='/deanery-frontend/profile' component={TeacherProfile}/>}
+          <PrivateRoute path='/deanery-frontend/subjects' component={Subjects}/>
+          <Route path='/deanery-frontend/signin' component={SignIn}/>
           <Route path='/' component={NotFound}/>
         </Switch>
       </div>

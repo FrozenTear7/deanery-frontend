@@ -4,7 +4,7 @@ class NotFound extends Component {
   render () {
     return (
       <div className='center'>
-        <img alt='NotFoundImg' src='./HesRight.jpg'/>
+        <img alt='NotFoundImg' src='https://i.imgflip.com/rob70.jpg'/>
       </div>
     )
   }
