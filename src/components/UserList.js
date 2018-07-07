@@ -35,7 +35,7 @@ class UserList extends Component {
   fetchUsers = () => {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/${this.props.mode}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/${this.props.mode}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -52,7 +52,7 @@ class UserList extends Component {
   deleteUser (id) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/${this.props.mode}/${id}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/${this.props.mode}/${id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
@@ -95,7 +95,7 @@ class UserList extends Component {
   handleSubmitPost (e) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/${this.props.mode}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/${this.props.mode}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -128,7 +128,7 @@ class UserList extends Component {
   handleSubmitUpdate (e) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/${this.props.mode}/${this.state.activeUser}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/${this.props.mode}/${this.state.activeUser}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
