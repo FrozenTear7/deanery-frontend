@@ -23,7 +23,7 @@ class Header extends Component {
           {localStorage.getItem('userId') &&
           <div>
             Signed in as: {localStorage.getItem('name')}
-            <button onClick={() => {
+            <button className='btn btn-info' onClick={() => {
               this.props.history.push('/signin')
               localStorage.removeItem('userId')
               localStorage.removeItem('name')

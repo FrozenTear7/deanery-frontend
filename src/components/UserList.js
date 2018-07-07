@@ -177,36 +177,24 @@ class UserList extends Component {
           <form onSubmit={this.handleSubmitPost}>
             <div className="form-row">
               <div className="form-group col-md-6">
-                Name:
-                <input className='form-control' id='name' type='text' value={this.state.postValues.name}
-                       onChange={this.handleChangePost}/>
-              </div>
+                Name: <input className='form-control' id='name' type='text' value={this.state.postValues.name}
+                             onChange={this.handleChangePost}/></div>
               <div className="form-group col-md-6">
-                Surname:
-                <input className='form-control' id='surname' type='text'
-                       value={this.state.postValues.surname}
-                       onChange={this.handleChangePost}/>
-              </div>
+                Surname: <input className='form-control' id='surname' type='text' value={this.state.postValues.surname}
+                                onChange={this.handleChangePost}/></div>
               <div className="form-group col-md-6">
-                Index:
-                <input className='form-control' id='index' type='text' value={this.state.postValues.index}
-                       onChange={this.handleChangePost}/>
-              </div>
+                Index: <input className='form-control' id='index' type='text' value={this.state.postValues.index}
+                              onChange={this.handleChangePost}/></div>
               <div className="form-group col-md-6">
-                Password:
-                <input className='form-control' id='password' type='text' value={this.state.postValues.password}
-                       onChange={this.handleChangePost}/>
-              </div>
+                Password: <input className='form-control' id='password' type='text'
+                                 value={this.state.postValues.password}
+                                 onChange={this.handleChangePost}/></div>
               <div className="form-group col-md-6">
-                Email:
-                <input className='form-control' id='email' type='text' value={this.state.postValues.email}
-                       onChange={this.handleChangePost}/>
-              </div>
+                Email: <input className='form-control' id='email' type='text' value={this.state.postValues.email}
+                              onChange={this.handleChangePost}/></div>
               <div className="form-group col-md-6">
-                Avatar:
-                <input className='form-control' id='avatar' type='text' value={this.state.postValues.avatar}
-                       onChange={this.handleChangePost}/>
-              </div>
+                Avatar: <input className='form-control' id='avatar' type='text' value={this.state.postValues.avatar}
+                               onChange={this.handleChangePost}/></div>
               <div className="form-group col-md-12">
                 <br/><input className='btn btn-success' type='submit' value='Submit'/>
               </div>
