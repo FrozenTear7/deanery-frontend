@@ -10,13 +10,13 @@ class Header extends Component {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link" href="/users">Users</a>
+                <a className="nav-link" href="https://frozentear7.github.io/deanery-frontend/users">Users</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/profile">Profile</a>
+                <a className="nav-link" href="https://frozentear7.github.io/deanery-frontend/profile">Profile</a>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="/subjects">Subjects</a>
+                <a className="nav-link" href="https://frozentear7.github.io/deanery-frontend/subjects">Subjects</a>
               </li>
             </ul>
           </div>
