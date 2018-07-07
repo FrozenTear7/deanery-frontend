@@ -30,13 +30,13 @@ class SignIn extends Component {
     let signinUrl
     switch (this.state.signinMode) {
       case 2:
-        signinUrl = 'http://localhost:3001/signin/admin'
+        signinUrl = 'https://frozentear7-deanery-example.herokuapp.com/signin/admin'
         break
       case 1:
-        signinUrl = 'http://localhost:3001/signin/teacher'
+        signinUrl = 'https://frozentear7-deanery-example.herokuapp.com/signin/teacher'
         break
       default:
-        signinUrl = 'http://localhost:3001/signin/student'
+        signinUrl = 'https://frozentear7-deanery-example.herokuapp.com/signin/student'
         break
     }
 

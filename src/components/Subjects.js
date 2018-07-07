@@ -32,7 +32,7 @@ class Subjects extends Component {
   fetchSubjects = () => {
     this.setState({loading: true})
 
-    fetchWithToken('http://localhost:3001/subjects', {
+    fetchWithToken('https://frozentear7-deanery-example.herokuapp.com/subjects', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -49,7 +49,7 @@ class Subjects extends Component {
   fetchStudents = () => {
     this.setState({loading: true})
 
-    fetchWithToken('http://localhost:3001/students', {
+    fetchWithToken('https://frozentear7-deanery-example.herokuapp.com/students', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -66,7 +66,7 @@ class Subjects extends Component {
   fetchTeachers = () => {
     this.setState({loading: true})
 
-    fetchWithToken('http://localhost:3001/teachers', {
+    fetchWithToken('https://frozentear7-deanery-example.herokuapp.com/teachers', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -83,7 +83,7 @@ class Subjects extends Component {
   deleteSubject (id) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/subjects/${id}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/subjects/${id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
@@ -129,7 +129,7 @@ class Subjects extends Component {
   handleSubmitPost (e) {
     this.setState({loading: true})
 
-    fetchWithToken('http://localhost:3001/subjects', {
+    fetchWithToken('https://frozentear7-deanery-example.herokuapp.com/subjects', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -157,7 +157,7 @@ class Subjects extends Component {
   handleSubmitUpdate (e) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/subjects/${this.state.activeSubject}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/subjects/${this.state.activeSubject}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',

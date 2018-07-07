@@ -6,7 +6,7 @@ const PrivateRoute = ({component: Component, ...rest}) => (
     return (
       localStorage.getItem('userId')
         ? <Component {...props} />
-        : <Redirect to='https://frozentear7.github.io/deanery-frontend/signin'/>
+        : <Redirect to='/signin'/>
     )
   }}/>
 )
