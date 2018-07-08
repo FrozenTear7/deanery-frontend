@@ -59,8 +59,19 @@ class Subjects extends Component {
       },
     })
       .then(response => {
-        response.json().then(data => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not fetch students')
+        }
+      })
+      .then(data => {
           this.setState({studentList: data, loading: false})
+        })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
   }
@@ -76,8 +87,19 @@ class Subjects extends Component {
       },
     })
       .then(response => {
-        response.json().then(data => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not fetch teachers')
+        }
+      })
+      .then(data => {
           this.setState({teacherList: data, loading: false})
+        })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
   }
@@ -92,10 +114,23 @@ class Subjects extends Component {
         'access-control-allow-origin': '*',
       },
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not delete the subject')
+        }
+      })
       .then(() => {
           this.fetchSubjects()
         },
       )
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
+      })
   }
 
   editSubject (subject) {
@@ -116,6 +151,12 @@ class Subjects extends Component {
           activeSubject: null,
         },
       )
+        .catch(error => {
+          this.setState({
+            error: error.message,
+            loading: false,
+          })
+        })
   }
 
   componentDidMount () {
@@ -140,12 +181,25 @@ class Subjects extends Component {
       },
       body: JSON.stringify(this.state.postValues),
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not add the subject')
+        }
+      })
       .then(() => {
         this.fetchSubjects()
         this.setState({
           postValues: {
             name: '',
           },
+        })
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
 
@@ -168,6 +222,13 @@ class Subjects extends Component {
       },
       body: JSON.stringify(this.state.updateValues),
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not edit the subject')
+        }
+      })
       .then(() => {
         this.fetchSubjects()
         this.setState({
@@ -181,21 +242,17 @@ class Subjects extends Component {
           activeSubject: false,
         })
       })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
+      })
 
     e.preventDefault()
   }
 
   renderUsers (users, mode) {
-    if (this.state.loading) return (
-      <div className='center'>LOADING...</div>
-    )
-
-    if (this.state.error) return (
-      <div className='alert alert-danger center' role='alert'>
-        Error: {this.state.error}
-      </div>
-    )
-
     return (
       <ul className='list-group'>
         {users.map(user => {
@@ -285,74 +342,78 @@ class Subjects extends Component {
 
   render () {
     if (this.state.loading) return (<div className='center'>LOADING...</div>)
-    if (this.state.error) return (
-      <div className='alert alert-danger center' role='alert'> Error: {this.state.error}        </div>)
 
     return (
-      <div className='row'>
-        <div className='col col-10 center'>
-          <h2>Subject list</h2>
-          <ul className='list-group'>
-            {this.state.subjectList.map(subject => {
-              return (
-                this.state.activeSubject !== subject._id ?
-                  <li className='list-group-item list-group-item-dark' key={subject._id}>
-                    <h4>Name: {subject.name}</h4>
-                    <button onClick={() => this.deleteSubject(subject._id)} className='btn btn-danger'>X</button>
-                    <button onClick={() => this.editSubject(subject)} className='btn btn-info'>Edit</button>
-                    <div className='row'>
-                      <div className='col col-6 center'>
-                        <h4>Students:</h4>
-                        {this.renderUsers(subject.students)}
+      <div>
+        {(this.state.error) &&
+        <div className='alert alert-danger center' role='alert'>
+          Error: {this.state.error}
+        </div>}
+        <div className='row'>
+          <div className='col col-10 center'>
+            <h2>Subject list</h2>
+            <ul className='list-group'>
+              {this.state.subjectList.map(subject => {
+                return (
+                  this.state.activeSubject !== subject._id ?
+                    <li className='list-group-item list-group-item-dark' key={subject._id}>
+                      <h4>Name: {subject.name}</h4>
+                      <button onClick={() => this.deleteSubject(subject._id)} className='btn btn-danger'>X</button>
+                      <button onClick={() => this.editSubject(subject)} className='btn btn-info'>Edit</button>
+                      <div className='row'>
+                        <div className='col col-6 center'>
+                          <h4>Students:</h4>
+                          {this.renderUsers(subject.students)}
+                        </div>
+                        <div className='col col-6 center'>
+                          <h4>Teachers:</h4>
+                          {this.renderUsers(subject.teachers)}
+                        </div>
                       </div>
-                      <div className='col col-6 center'>
-                        <h4>Teachers:</h4>
-                        {this.renderUsers(subject.teachers)}
+                    </li> : <div>
+                      <form onSubmit={this.handleSubmitUpdate}>
+                        <label>
+                          Name:
+                          <input className='form-control' id='name' type='text' value={this.state.updateValues.name}
+                                 onChange={this.handleChangeUpdate}/><br/>
+                        </label>
+                        <br/><input className='btn btn-success' type='submit' value='Submit'/>
+                        <button onClick={() => this.editSubject(subject)} className='btn btn-info'>Cancel</button>
+                      </form>
+                      <div className='row'>
+                        <div className='col col-3 center'>
+                          Subject's students:
+                          {this.renderUsers(subject.students, 'deleteStudent')}
+                        </div>
+                        <div className='col col-3 center'>
+                          Students:
+                          {this.renderUsers(this.state.studentList.filter(student => containsObject(student, subject.students) === false), 'addStudent')}
+                        </div>
+                        <div className='col col-3 center'>
+                          Subject's teachers:
+                          {this.renderUsers(subject.teachers, 'deleteTeacher')}
+                        </div>
+                        <div className='col col-3 center'>
+                          Teachers:
+                          {this.renderUsers(this.state.teacherList.filter(teacher => containsObject(teacher, subject.teachers) === false), 'addTeacher')}
+                        </div>
                       </div>
                     </div>
-                  </li> : <div>
-                    <form onSubmit={this.handleSubmitUpdate}>
-                      <label>
-                        Name:
-                        <input className='form-control' id='name' type='text' value={this.state.updateValues.name}
-                               onChange={this.handleChangeUpdate}/><br/>
-                      </label>
-                      <br/><input className='btn btn-success' type='submit' value='Submit'/>
-                      <button onClick={() => this.editSubject(subject)} className='btn btn-info'>Cancel</button>
-                    </form>
-                    <div className='row'>
-                      <div className='col col-3 center'>
-                        Subject's students:
-                        {this.renderUsers(subject.students, 'deleteStudent')}
-                      </div>
-                      <div className='col col-3 center'>
-                        Students:
-                        {this.renderUsers(this.state.studentList.filter(student => containsObject(student, subject.students) === false), 'addStudent')}
-                      </div>
-                      <div className='col col-3 center'>
-                        Subject's teachers:
-                        {this.renderUsers(subject.teachers, 'deleteTeacher')}
-                      </div>
-                      <div className='col col-3 center'>
-                        Teachers:
-                        {this.renderUsers(this.state.teacherList.filter(teacher => containsObject(teacher, subject.teachers) === false), 'addTeacher')}
-                      </div>
-                    </div>
-                  </div>
-              )
-            })}
-          </ul>
-        </div>
-        <div className='col col-2 center'>
-          <h3>Add new subject:</h3>
-          <form onSubmit={this.handleSubmitPost}>
-            <label>
-              Name:
-              <input className='form-control' id='name' type='text' value={this.state.postValues.name}
-                     onChange={this.handleChangePost}/><br/>
-            </label>
-            <br/><input className='btn btn-success' type='submit' value='Submit'/>
-          </form>
+                )
+              })}
+            </ul>
+          </div>
+          <div className='col col-2 center'>
+            <h3>Add new subject:</h3>
+            <form onSubmit={this.handleSubmitPost}>
+              <label>
+                Name:
+                <input className='form-control' id='name' type='text' value={this.state.postValues.name}
+                       onChange={this.handleChangePost}/><br/>
+              </label>
+              <br/><input className='btn btn-success' type='submit' value='Submit'/>
+            </form>
+          </div>
         </div>
       </div>
     )

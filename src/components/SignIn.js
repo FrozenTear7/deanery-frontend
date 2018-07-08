@@ -25,7 +25,7 @@ class SignIn extends Component {
   }
 
   handleSubmit (e) {
-    this.setState({loading: true})
+    this.setState({loading: true, error: null})
 
     let signinUrl
     switch (this.state.signinMode) {
@@ -84,32 +84,34 @@ class SignIn extends Component {
     if (this.state.loading) return (
       <div className='center'>LOADING...</div>
     )
-    if (this.state.error) return (
-      <div className='alert alert-danger center' role='alert'>
-        Error: {this.state.error}        </div>
-    )
 
     return (
-      <div className='center'>
-        <h3>SIGN IN</h3>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Index:
-            <input className='form-control' id='index' type='text' value={this.state.signInValues.index}
-                   onChange={this.handleChange}/><br/>
-            Password:
-            <input className='form-control' id='password' type='text' value={this.state.signInValues.password}
-                   onChange={this.handleChange}/><br/>
-          </label>
-          <br/><input className='btn btn-success' type='submit' value='Submit'/>
-        </form>
-        <br/>
-        <button className={this.state.signinMode === 0 ? 'btn btn-success' : 'btn btn-info'}
-                onClick={() => {this.setState({signinMode: 0})}}>Student
-        </button>
-        <button className={this.state.signinMode === 1 ? 'btn btn-success' : 'btn btn-info'}
-                onClick={() => {this.setState({signinMode: 1})}}>Teacher
-        </button>
+      <div>
+        {(this.state.error) &&
+        <div className='alert alert-danger center' role='alert'>
+          Error: {this.state.error}
+        </div>}
+        <div className='center'>
+          <h3>SIGN IN</h3>
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Index:
+              <input className='form-control' id='index' type='text' value={this.state.signInValues.index}
+                     onChange={this.handleChange}/><br/>
+              Password:
+              <input className='form-control' id='password' type='text' value={this.state.signInValues.password}
+                     onChange={this.handleChange}/><br/>
+            </label>
+            <br/><input className='btn btn-success' type='submit' value='Submit'/>
+          </form>
+          <br/>
+          <button className={this.state.signinMode === 0 ? 'btn btn-success' : 'btn btn-info'}
+                  onClick={() => {this.setState({signinMode: 0})}}>Student
+          </button>
+          <button className={this.state.signinMode === 1 ? 'btn btn-success' : 'btn btn-info'}
+                  onClick={() => {this.setState({signinMode: 1})}}>Teacher
+          </button>
+        </div>
       </div>
     )
   }
