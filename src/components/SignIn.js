@@ -92,7 +92,53 @@ class SignIn extends Component {
           Error: {this.state.error}
         </div>}
         <div className='center'>
+          <br/><br/>
           <h3>SIGN IN</h3>
+          <br/><br/>
+          <button type='button' className='btn btn-info' data-toggle='modal' data-target='#help'>
+            Help
+          </button>
+          <div className='modal fade' id='help' role='dialog' aria-labelledby='helpLabel' aria-hidden='true'>
+            <div className='modal-dialog' role='document'>
+              <div className='modal-content'>
+                <div className='modal-header'>
+                  <h5 className='modal-title' id='helpLabel'>HELP</h5>
+                  <button type='button' className='close' data-dismiss='modal' aria-label='Close'>
+                    <span aria-hidden='true'>&times;</span>
+                  </button>
+                </div>
+                <div className='modal-body'>
+                  <div className='row'>
+                    <div className='col col-6'>
+                      Example student:
+                      <h2>
+                        Index: <br/>
+                        123123
+                      </h2>
+                      <h3>
+                        Password: <br/>
+                        student
+                      </h3>
+                    </div>
+                    <div className='col col-6'>
+                      Example teacher:
+                      <h2>
+                        Index: <br/>
+                        100100
+                      </h2>
+                      <h3>
+                        Password: <br/>
+                        teacher
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <br/><br/><br/><br/>
+
           <form onSubmit={this.handleSubmit}>
             <label>
               Index:
@@ -105,10 +151,10 @@ class SignIn extends Component {
             <br/><input className='btn btn-success' type='submit' value='Submit'/>
           </form>
           <br/>
-          <button className={this.state.signinMode === 0 ? 'btn btn-success' : 'btn btn-info'}
+          <button className={this.state.signinMode === 0 ? 'btn btn-primary' : 'btn btn-sm'}
                   onClick={() => {this.setState({signinMode: 0})}}>Student
           </button>
-          <button className={this.state.signinMode === 1 ? 'btn btn-success' : 'btn btn-info'}
+          <button className={this.state.signinMode === 1 ? 'btn btn-primary' : 'btn btn-sm'}
                   onClick={() => {this.setState({signinMode: 1})}}>Teacher
           </button>
         </div>

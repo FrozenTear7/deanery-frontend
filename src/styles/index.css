@@ -23,6 +23,18 @@ ul {
 }
 
 .jumbotron {
-    background-color: #cdecff;
-    color: #080243;
+    background-color: #0d1228;
+    color: #c2f9fc;
+}
+
+.modal {
+    color: #0b2e13;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
 }
