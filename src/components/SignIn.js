@@ -7,13 +7,13 @@ class SignIn extends Component {
     this.state = {
       signInValues: {
         index: '',
-        password: ''
+        password: '',
       },
       userList: [],
       loading: false,
       error: null,
       activeUser: null,
-      signinMode: 0
+      signinMode: 0,
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -45,41 +45,49 @@ class SignIn extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'access-control-allow-origin': '*'
+        'access-control-allow-origin': '*',
       },
-      body: JSON.stringify(this.state.signInValues)
+      body: JSON.stringify(this.state.signInValues),
     })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.error) {
-          localStorage.setItem('userId', data.id)
-          localStorage.setItem('userMode', String(this.state.signinMode))
-          localStorage.setItem('name', data.name)
-          localStorage.setItem('token', data.token)
-          this.setState({
-            signInValues: {
-              index: '',
-              password: ''
-            },
-            loading: false
-          })
-          this.props.history.push('/deanery-frontend/')
+      .then(response => {
+        if (response.ok) {
+          return response.json()
         } else {
-          this.setState({
-            error: data,
-            loading: false
-          })
+          throw new Error('Could not sign in')
         }
+      })
+      .then(data => {
+        localStorage.setItem('userId', data.id)
+        localStorage.setItem('userMode', String(this.state.signinMode))
+        localStorage.setItem('name', data.name)
+        localStorage.setItem('token', data.token)
+        this.setState({
+          signInValues: {
+            index: '',
+            password: '',
+          },
+          loading: false,
+        })
+        this.props.history.push('/deanery-frontend/')
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
       })
 
     e.preventDefault()
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
+    if (this.state.loading) return (
+      <div className='center'>LOADING...</div>
+    )
+    if (this.state.error) return (
+      <div className='alert alert-danger center' role='alert'>
+        Error: {this.state.error}        </div>
+    )
 
     return (
       <div className='center'>
@@ -96,8 +104,12 @@ class SignIn extends Component {
           <br/><input className='btn btn-success' type='submit' value='Submit'/>
         </form>
         <br/>
-        <button className={this.state.signinMode === 0 ? 'btn btn-success' : 'btn btn-info'} onClick={() => {this.setState({signinMode: 0})}}>Student</button>
-        <button className={this.state.signinMode === 1 ? 'btn btn-success' : 'btn btn-info'} onClick={() => {this.setState({signinMode: 1})}}>Teacher</button>
+        <button className={this.state.signinMode === 0 ? 'btn btn-success' : 'btn btn-info'}
+                onClick={() => {this.setState({signinMode: 0})}}>Student
+        </button>
+        <button className={this.state.signinMode === 1 ? 'btn btn-success' : 'btn btn-info'}
+                onClick={() => {this.setState({signinMode: 1})}}>Teacher
+        </button>
       </div>
     )
   }

@@ -21,6 +21,7 @@ class Subjects extends Component {
       studentList: [],
       teacherList: [],
       loading: false,
+      error: null,
       activeSubject: null,
     }
 
@@ -185,6 +186,16 @@ class Subjects extends Component {
   }
 
   renderUsers (users, mode) {
+    if (this.state.loading) return (
+      <div className='center'>LOADING...</div>
+    )
+
+    if (this.state.error) return (
+      <div className='alert alert-danger center' role='alert'>
+        Error: {this.state.error}
+      </div>
+    )
+
     return (
       <ul className='list-group'>
         {users.map(user => {
@@ -273,10 +284,9 @@ class Subjects extends Component {
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
+    if (this.state.loading) return (<div className='center'>LOADING...</div>)
+    if (this.state.error) return (
+      <div className='alert alert-danger center' role='alert'> Error: {this.state.error}        </div>)
 
     return (
       <div className='row'>

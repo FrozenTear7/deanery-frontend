@@ -45,7 +45,12 @@ class UserList extends Component {
     })
       .then(response => {
         response.json().then(data => {
-          this.setState({userList: data, loading: false})
+          if (response.status === 500) {
+            this.setState({error: data.message, loading: false})
+          }
+          else {
+            this.setState({userList: data, loading: false})
+          }
         })
       })
   }
@@ -156,12 +161,16 @@ class UserList extends Component {
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
+    if (this.state.loading) return (
+      <div className='center'>LOADING...</div>
+    )
 
-    console.log(this.state.userList)
+    if (this.state.error)
+      return (
+        <div className='alert alert-danger center' role='alert'>
+          Error: {this.state.error}
+        </div>
+      )
 
     return (
       <div>
@@ -176,27 +185,27 @@ class UserList extends Component {
         {this.state.addFormActive && <div>
           Add new:<br/>
           <form onSubmit={this.handleSubmitPost}>
-            <div className="form-row">
-              <div className="form-group col-md-6">
+            <div className='form-row'>
+              <div className='form-group col-md-6'>
                 Name: <input className='form-control' id='name' type='text' value={this.state.postValues.name}
                              onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
+              <div className='form-group col-md-6'>
                 Surname: <input className='form-control' id='surname' type='text' value={this.state.postValues.surname}
                                 onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
+              <div className='form-group col-md-6'>
                 Index: <input className='form-control' id='index' type='text' value={this.state.postValues.index}
                               onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
+              <div className='form-group col-md-6'>
                 Password: <input className='form-control' id='password' type='text'
                                  value={this.state.postValues.password}
                                  onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
+              <div className='form-group col-md-6'>
                 Email: <input className='form-control' id='email' type='text' value={this.state.postValues.email}
                               onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
+              <div className='form-group col-md-6'>
                 Avatar: <input className='form-control' id='avatar' type='text' value={this.state.postValues.avatar}
                                onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-12">
+              <div className='form-group col-md-12'>
                 <br/><input className='btn btn-success' type='submit' value='Submit'/>
               </div>
             </div>
@@ -211,29 +220,29 @@ class UserList extends Component {
                 <button onClick={() => this.deleteUser(user._id)} className='btn btn-danger'>X</button>
                 <button onClick={() => this.editUser(user)} className='btn btn-info'>Edit</button>
               </li> : <form onSubmit={this.handleSubmitUpdate}>
-                <div className="form-row">
-                  <div className="form-group col-md-6">
+                <div className='form-row'>
+                  <div className='form-group col-md-6'>
                     Name:
                     <input className='form-control' id='name' type='text' value={this.state.updateValues.name}
                            onChange={this.handleChangeUpdate}/>
                   </div>
-                  <div className="form-group col-md-6">
+                  <div className='form-group col-md-6'>
                     Surname:
                     <input className='form-control' id='surname' type='text'
                            value={this.state.updateValues.surname}
                            onChange={this.handleChangeUpdate}/>
                   </div>
-                  <div className="form-group col-md-6">
+                  <div className='form-group col-md-6'>
                     Index:
                     <input className='form-control' id='index' type='text' value={this.state.updateValues.index}
                            onChange={this.handleChangeUpdate}/>
                   </div>
-                  <div className="form-group col-md-6">
+                  <div className='form-group col-md-6'>
                     Email:
                     <input className='form-control' id='email' type='text' value={this.state.updateValues.email}
                            onChange={this.handleChangeUpdate}/>
                   </div>
-                  <div className="form-group col-md-12">
+                  <div className='form-group col-md-12'>
                     Avatar:
                     <input className='form-control' id='avatar' type='text' value={this.state.updateValues.avatar}
                            onChange={this.handleChangeUpdate}/>

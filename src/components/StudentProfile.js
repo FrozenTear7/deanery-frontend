@@ -8,6 +8,7 @@ class StudentProfile extends Component {
     this.state = {
       user: {},
       loading: false,
+      error: null,
       activeSubject: null,
     }
   }
@@ -50,12 +51,15 @@ class StudentProfile extends Component {
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
+    if (this.state.loading) return (
+      <div className='center'>LOADING...</div>
+    )
 
-    console.log(this.state)
+    if (this.state.error) return (
+      <div className='alert alert-danger center' role='alert'>
+        Error: {this.state.error}
+      </div>
+    )
 
     return (
       <div className='row'>
