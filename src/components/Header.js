@@ -10,14 +10,14 @@ class Header extends Component {
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link" href="/deanery-frontend/users">Users</a>
-              </li>
-              <li className="nav-item">
                 <a className="nav-link" href="/deanery-frontend/profile">Profile</a>
               </li>
-              <li className="nav-item">
+              {localStorage.getItem('userMode') == 1 && <li className="nav-item">
+                <a className="nav-link" href="/deanery-frontend/users">Users</a>
+              </li>}
+              {localStorage.getItem('userMode') == 1 && <li className="nav-item">
                 <a className="nav-link" href="/deanery-frontend/subjects">Subjects</a>
-              </li>
+              </li>}
             </ul>
           </div>
           {localStorage.getItem('userId') &&

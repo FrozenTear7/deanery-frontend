@@ -96,9 +96,8 @@ class SignIn extends Component {
           <br/><input className='btn btn-success' type='submit' value='Submit'/>
         </form>
         <br/>
-        <button className='btn btn-info' onClick={() => {this.setState({signinMode: 0})}}>Student</button>
-        <button className='btn btn-info' onClick={() => {this.setState({signinMode: 1})}}>Teacher</button>
-        <button className='btn btn-info' onClick={() => {this.setState({signinMode: 2})}}>Admin (Not available)</button>
+        <button className={this.state.signinMode === 0 ? 'btn btn-success' : 'btn btn-info'} onClick={() => {this.setState({signinMode: 0})}}>Student</button>
+        <button className={this.state.signinMode === 1 ? 'btn btn-success' : 'btn btn-info'} onClick={() => {this.setState({signinMode: 1})}}>Teacher</button>
       </div>
     )
   }

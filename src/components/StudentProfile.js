@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import fetchWithToken from '../helpers/fetchWithToken'
+import UserCard from './UserCard'
 
 class StudentProfile extends Component {
   constructor (props) {
@@ -54,23 +55,12 @@ class StudentProfile extends Component {
         <div>LOADING...</div>
       )
 
+    console.log(this.state)
+
     return (
       <div className='row'>
         <div className='col col-6 center'>
-          <h1>Profile:</h1>
-          <div className='row'>
-            <div className='col col-6 center'>
-              <h5>Id: {this.state.user._id}</h5>
-              <h4>Name: {this.state.user.name}</h4>
-              <h4>Surname: {this.state.user.surname}</h4>
-              <h4>Index: {this.state.user.index}</h4>
-              <h4>Email: {this.state.user.email}</h4>
-            </div>
-            <div className='col col-6 center'>
-              Avatar:<br/>
-              {this.state.user.avatar && <img className='avatar' alt='Avatar' src={this.state.user.avatar}/>}
-            </div>
-          </div>
+          <UserCard user={this.state.user}/>
         </div>
         {this.state.user.grades && <div className='col col-6 center'>
           <h2>Subjects:</h2>
@@ -119,9 +109,11 @@ class StudentProfile extends Component {
                     </div>
                     <div className='col col-3 center'>
                     </div>
+                    {this.state.user.grades.filter(grade => grade.type === 2 && grade.subject._id === this.state.activeSubject).length > 0 &&
                     <div className='col col-4 center jumbotron'>
-                      <h2>Final grade: {this.state.user.grades.filter(grade => grade.type === 2)[0].value || '-'}</h2>
-                    </div>
+                      <h2>Final
+                        grade: {this.state.user.grades.filter(grade => grade.type === 2 && grade.subject._id === this.state.activeSubject)[0].value}</h2>
+                    </div>}
                   </div>
                 </div>}
               </li>)}

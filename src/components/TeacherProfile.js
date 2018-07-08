@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import fetchWithToken from '../helpers/fetchWithToken'
+import UserCard from './UserCard'
 
 class TeacherProfile extends Component {
   constructor (props) {
@@ -130,6 +131,10 @@ class TeacherProfile extends Component {
     else
       this.setState({
           activeSubject: null,
+          updateValues: {
+            value: '',
+            note: '',
+          },
         },
       )
   }
@@ -188,23 +193,10 @@ class TeacherProfile extends Component {
         <div>LOADING...</div>
       )
 
-    console.log(this.state)
-
     return (
       <div className='row'>
         <div className='col col-6 center'>
-          <div className='row'>
-            <div className='col col-6 center'>
-              <h5>Id: {this.state.user._id}</h5>
-              <h4>Name: {this.state.user.name}</h4>
-              <h4>Surname: {this.state.user.surname}</h4>
-              <h4>Index: {this.state.user.index}</h4>
-              <h4>Email: {this.state.user.email}</h4>
-            </div>
-            <div className='col col-6 center'>
-              {this.state.user.avatar && <img className='avatar' alt='Avatar' src={this.state.user.avatar}/>}
-            </div>
-          </div>
+          <UserCard user={this.state.user}/>
         </div>
         {this.state.user.subjects && <div className='col col-6 center'>
           <h2>Subjects:</h2>
@@ -219,9 +211,20 @@ class TeacherProfile extends Component {
                   <ul className='list-group'>
                     {subject.students.map(student =>
                       <li className='list-group-item list-group-item-secondary' key={student._id}>
-                        <h4>Name: {student.name}</h4>
-                        <h4>Surname: {student.name}</h4>
-                        <h4>Index: {student.index}</h4>
+                        <div className='row'>
+                          <div
+                            className={student.grades.filter(grade => grade.type === 2 && grade.subject === this.state.activeSubject).length > 0
+                              ? 'col col-6 center' : 'col col-12 center'}>
+                            <UserCard user={student}/>
+                          </div>
+                          <div className='col col-6 center'>
+                            {student.grades.filter(grade => grade.type === 2 && grade.subject === this.state.activeSubject).length > 0 &&
+                            <div className='center jumbotron'>
+                              <h2>Final
+                                grade: {student.grades.filter(grade => grade.type === 2 && grade.subject === this.state.activeSubject)[0].value}</h2>
+                            </div>}
+                          </div>
+                        </div>
                         <button className='btn btn-success' onClick={() => this.editStudent(student)}>+</button>
                         {this.state.activeStudent === student._id &&
                         <div>
@@ -235,7 +238,7 @@ class TeacherProfile extends Component {
                               <input className='form-control' id='note' type='text'
                                      value={this.state.postValues.note}
                                      onChange={this.handleChangePost}/>
-                              {student.grades.filter(grade => grade.type === 2).length === 0 &&
+                              {student.grades.filter(grade => grade.type === 2 && grade.subject === this.state.activeSubject).length === 0 &&
                               <div>
                                 Type:
                                 <select className='form-control' id='type'

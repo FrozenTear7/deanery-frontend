@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import fetchWithToken from '../helpers/fetchWithToken'
+import UserCard from './UserCard'
 
 class UserList extends Component {
   constructor (props) {
@@ -206,19 +207,7 @@ class UserList extends Component {
           {this.state.userList.map(user => {
             return (
               this.state.activeUser !== user._id ? <li className='list-group-item list-group-item-dark' key={user._id}>
-                <div className='row'>
-                  <div className='col col-6 center'>
-                    <h5>Id: {user._id}</h5>
-                    <h4>Name: {user.name}</h4>
-                    <h4>Surname: {user.surname}</h4>
-                    <h4>Index: {user.index}</h4>
-                    <h4>Email: {user.email}</h4>
-                  </div>
-                  <div className='col col-6 center'>
-                    Avatar:<br/>
-                    {user.avatar && <img className='avatar' alt='Avatar' src={user.avatar}/>}
-                  </div>
-                </div>
+                <UserCard user={user}/>
                 <button onClick={() => this.deleteUser(user._id)} className='btn btn-danger'>X</button>
                 <button onClick={() => this.editUser(user)} className='btn btn-info'>Edit</button>
               </li> : <form onSubmit={this.handleSubmitUpdate}>
