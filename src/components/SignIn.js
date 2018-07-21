@@ -7,13 +7,13 @@ class SignIn extends Component {
     this.state = {
       signInValues: {
         index: '',
-        password: ''
+        password: '',
       },
       userList: [],
       loading: false,
       error: null,
       activeUser: null,
-      signinMode: 0
+      signinMode: 0,
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -25,18 +25,18 @@ class SignIn extends Component {
   }
 
   handleSubmit (e) {
-    this.setState({loading: true})
+    this.setState({loading: true, error: null})
 
     let signinUrl
     switch (this.state.signinMode) {
       case 2:
-        signinUrl = 'http://localhost:3001/signin/admin'
+        signinUrl = 'https://frozentear7-deanery-example.herokuapp.com/signin/admin'
         break
       case 1:
-        signinUrl = 'http://localhost:3001/signin/teacher'
+        signinUrl = 'https://frozentear7-deanery-example.herokuapp.com/signin/teacher'
         break
       default:
-        signinUrl = 'http://localhost:3001/signin/student'
+        signinUrl = 'https://frozentear7-deanery-example.herokuapp.com/signin/student'
         break
     }
 
@@ -45,60 +45,119 @@ class SignIn extends Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'access-control-allow-origin': '*'
+        'access-control-allow-origin': '*',
       },
-      body: JSON.stringify(this.state.signInValues)
+      body: JSON.stringify(this.state.signInValues),
     })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.error) {
-          localStorage.setItem('userId', data.id)
-          localStorage.setItem('userMode', String(this.state.signinMode))
-          localStorage.setItem('name', data.name)
-          localStorage.setItem('token', data.token)
-          this.setState({
-            signInValues: {
-              index: '',
-              password: ''
-            },
-            loading: false
-          })
-          this.props.history.push('/')
+      .then(response => {
+        if (response.ok) {
+          return response.json()
         } else {
-          this.setState({
-            error: data,
-            loading: false
-          })
+          throw new Error('Could not sign in')
         }
+      })
+      .then(data => {
+        localStorage.setItem('userId', data.id)
+        localStorage.setItem('userMode', String(this.state.signinMode))
+        localStorage.setItem('name', data.name)
+        localStorage.setItem('token', data.token)
+        this.setState({
+          signInValues: {
+            index: '',
+            password: '',
+          },
+          loading: false,
+        })
+        this.props.history.push('/deanery-frontend/')
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
       })
 
     e.preventDefault()
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
+    if (this.state.loading) return (
+      <div className='center'>LOADING...</div>
+    )
 
     return (
-      <div className='center'>
-        <h3>SIGN IN</h3>
-        <form onSubmit={this.handleSubmit}>
-          <label>
-            Index:
-            <input className='form-control' id='index' type='text' value={this.state.signInValues.index}
-                   onChange={this.handleChange}/><br/>
-            Password:
-            <input className='form-control' id='password' type='text' value={this.state.signInValues.password}
-                   onChange={this.handleChange}/><br/>
-          </label>
-          <br/><input className='btn btn-success' type='submit' value='Submit'/>
-        </form>
-        <br/>
-        <button className='btn btn-info' onClick={() => {this.setState({signinMode: 0})}}>Student</button>
-        <button className='btn btn-info' onClick={() => {this.setState({signinMode: 1})}}>Teacher</button>
-        <button className='btn btn-info' onClick={() => {this.setState({signinMode: 2})}}>Admin (Not available)</button>
+      <div>
+        {(this.state.error) &&
+        <div className='alert alert-danger center' role='alert'>
+          Error: {this.state.error}
+        </div>}
+        <div className='center'>
+          <br/><br/>
+          <h3>SIGN IN</h3>
+          <br/><br/>
+          <button type='button' className='btn btn-info' data-toggle='modal' data-target='#help'>
+            Help
+          </button>
+          <div className='modal fade' id='help' role='dialog' aria-labelledby='helpLabel' aria-hidden='true'>
+            <div className='modal-dialog' role='document'>
+              <div className='modal-content'>
+                <div className='modal-header'>
+                  <h5 className='modal-title' id='helpLabel'>HELP</h5>
+                  <button type='button' className='close' data-dismiss='modal' aria-label='Close'>
+                    <span aria-hidden='true'>&times;</span>
+                  </button>
+                </div>
+                <div className='modal-body'>
+                  <div className='row'>
+                    <div className='col col-6'>
+                      Example student:
+                      <h2>
+                        Index: <br/>
+                        123123
+                      </h2>
+                      <h3>
+                        Password: <br/>
+                        student
+                      </h3>
+                    </div>
+                    <div className='col col-6'>
+                      Example teacher:
+                      <h2>
+                        Index: <br/>
+                        100100
+                      </h2>
+                      <h3>
+                        Password: <br/>
+                        teacher
+                      </h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <br/><br/><br/><br/>
+
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Index:
+              <input className='form-control' id='index' type='text' value={this.state.signInValues.index}
+                     onChange={this.handleChange}/><br/>
+              Password:
+              <input className='form-control' id='password' type='text' value={this.state.signInValues.password}
+                     onChange={this.handleChange}/><br/>
+            </label>
+            <br/><input className='btn btn-success' type='submit' value='Submit'/>
+          </form>
+          <br/>
+          <button className={this.state.signinMode === 0 ? 'btn btn-primary' : 'btn btn-sm'}
+                  onClick={() => {this.setState({signinMode: 0})}}>Student
+          </button>
+          <button className={this.state.signinMode === 1 ? 'btn btn-primary' : 'btn btn-sm'}
+                  onClick={() => {this.setState({signinMode: 1})}}>Teacher
+          </button>
+        </div>
       </div>
     )
   }

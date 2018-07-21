@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import fetchWithToken from '../helpers/fetchWithToken'
 import containsObject from '../helpers/containsObject'
+import UserCard from './UserCard'
 
 class Subjects extends Component {
   constructor (props) {
@@ -20,6 +21,7 @@ class Subjects extends Component {
       studentList: [],
       teacherList: [],
       loading: false,
+      error: null,
       activeSubject: null,
     }
 
@@ -32,7 +34,7 @@ class Subjects extends Component {
   fetchSubjects = () => {
     this.setState({loading: true})
 
-    fetchWithToken('http://localhost:3001/subjects', {
+    fetchWithToken('https://frozentear7-deanery-example.herokuapp.com/subjects', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -49,7 +51,7 @@ class Subjects extends Component {
   fetchStudents = () => {
     this.setState({loading: true})
 
-    fetchWithToken('http://localhost:3001/students', {
+    fetchWithToken('https://frozentear7-deanery-example.herokuapp.com/students', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -57,8 +59,19 @@ class Subjects extends Component {
       },
     })
       .then(response => {
-        response.json().then(data => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not fetch students')
+        }
+      })
+      .then(data => {
           this.setState({studentList: data, loading: false})
+        })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
   }
@@ -66,7 +79,7 @@ class Subjects extends Component {
   fetchTeachers = () => {
     this.setState({loading: true})
 
-    fetchWithToken('http://localhost:3001/teachers', {
+    fetchWithToken('https://frozentear7-deanery-example.herokuapp.com/teachers', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -74,8 +87,19 @@ class Subjects extends Component {
       },
     })
       .then(response => {
-        response.json().then(data => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not fetch teachers')
+        }
+      })
+      .then(data => {
           this.setState({teacherList: data, loading: false})
+        })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
   }
@@ -83,17 +107,30 @@ class Subjects extends Component {
   deleteSubject (id) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/subjects/${id}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/subjects/${id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
         'access-control-allow-origin': '*',
       },
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not delete the subject')
+        }
+      })
       .then(() => {
           this.fetchSubjects()
         },
       )
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
+      })
   }
 
   editSubject (subject) {
@@ -114,6 +151,12 @@ class Subjects extends Component {
           activeSubject: null,
         },
       )
+        .catch(error => {
+          this.setState({
+            error: error.message,
+            loading: false,
+          })
+        })
   }
 
   componentDidMount () {
@@ -129,7 +172,7 @@ class Subjects extends Component {
   handleSubmitPost (e) {
     this.setState({loading: true})
 
-    fetchWithToken('http://localhost:3001/subjects', {
+    fetchWithToken('https://frozentear7-deanery-example.herokuapp.com/subjects', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -138,12 +181,25 @@ class Subjects extends Component {
       },
       body: JSON.stringify(this.state.postValues),
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not add the subject')
+        }
+      })
       .then(() => {
         this.fetchSubjects()
         this.setState({
           postValues: {
             name: '',
           },
+        })
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
 
@@ -157,7 +213,7 @@ class Subjects extends Component {
   handleSubmitUpdate (e) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/subjects/${this.state.activeSubject}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/subjects/${this.state.activeSubject}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -166,6 +222,13 @@ class Subjects extends Component {
       },
       body: JSON.stringify(this.state.updateValues),
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not edit the subject')
+        }
+      })
       .then(() => {
         this.fetchSubjects()
         this.setState({
@@ -179,13 +242,17 @@ class Subjects extends Component {
           activeSubject: false,
         })
       })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
+      })
 
     e.preventDefault()
   }
 
   renderUsers (users, mode) {
-    console.log(this.state.updateValues)
-
     return (
       <ul className='list-group'>
         {users.map(user => {
@@ -194,57 +261,78 @@ class Subjects extends Component {
               className='list-group-item list-group-item-dark'
               key={user._id}
             >
-              <h4>{user.name}</h4>
-              <h4>{user.surname}</h4>
-              <h4>{user.index}</h4>
-              {mode === 'addStudent' && <button className='btn btn-danger' onClick={() => this.setState({
-                updateValues: {
-                  ...this.state.updateValues,
-                  studentListAdd: [...this.state.updateValues.studentListAdd, user],
-                },
-              })}>Add</button>}
-              {mode === 'addTeacher' && <button className='btn btn-danger' onClick={() => this.setState({
-                updateValues: {
-                  ...this.state.updateValues,
-                  teacherListAdd: [...this.state.updateValues.teacherListAdd, user],
-                },
-              })}>Add</button>}
-              {mode === 'deleteStudent' && <button className='btn btn-danger' onClick={() => this.setState({
-                updateValues: {
-                  ...this.state.updateValues,
-                  studentListDelete: [...this.state.updateValues.studentListDelete, user],
-                },
-              })}>X</button>}
-              {mode === 'deleteTeacher' && <button className='btn btn-danger' onClick={() => this.setState({
-                updateValues: {
-                  ...this.state.updateValues,
-                  teacherListDelete: [...this.state.updateValues.teacherListDelete, user],
-                },
-              })}>X</button>}
-              {mode === 'deleteStudentRevert' && <button className='btn btn-danger' onClick={() => this.setState({
-                updateValues: {
-                  ...this.state.updateValues,
-                  studentListDelete: this.state.updateValues.studentListDelete.filter(student => student._id !== user._id),
-                },
-              })}>X</button>}
-              {mode === 'deleteTeacherRevert' && <button className='btn btn-danger' onClick={() => this.setState({
-                updateValues: {
-                  ...this.state.updateValues,
-                  teacherListDelete: this.state.updateValues.teacherListDelete.filter(teacher => teacher._id !== user._id),
-                },
-              })}>X</button>}
-              {mode === 'addStudentRevert' && <button className='btn btn-danger' onClick={() => this.setState({
-                updateValues: {
-                  ...this.state.updateValues,
-                  studentListAdd: this.state.updateValues.studentListAdd.filter(student => student._id !== user._id),
-                },
-              })}>X</button>}
-              {mode === 'addTeacherRevert' && <button className='btn btn-danger' onClick={() => this.setState({
-                updateValues: {
-                  ...this.state.updateValues,
-                  teacherListAdd: this.state.updateValues.teacherListAdd.filter(teacher => teacher._id !== user._id),
-                },
-              })}>X</button>}
+              <UserCard user={user}/>
+              {mode && <button className='btn btn-success' onClick={() => {
+                switch (mode) {
+                  case 'addStudent':
+                    if (!containsObject(user, this.state.updateValues.studentListAdd))
+                      this.setState({
+                        updateValues: {
+                          ...this.state.updateValues,
+                          studentListAdd: [...this.state.updateValues.studentListAdd, user],
+                        },
+                      })
+                    else
+                      this.setState({
+                        updateValues: {
+                          ...this.state.updateValues,
+                          studentListAdd: this.state.updateValues.studentListAdd.filter(student => student._id !== user._id),
+                        },
+                      })
+                    break
+                  case 'addTeacher':
+                    if (!containsObject(user, this.state.updateValues.teacherListAdd))
+                      this.setState({
+                        updateValues: {
+                          ...this.state.updateValues,
+                          teacherListAdd: [...this.state.updateValues.teacherListAdd, user],
+                        },
+                      })
+                    else
+                      this.setState({
+                        updateValues: {
+                          ...this.state.updateValues,
+                          teacherListAdd: this.state.updateValues.teacherListAdd.filter(teacher => teacher._id !== user._id),
+                        },
+                      })
+                    break
+                  case 'deleteStudent':
+                    if (!containsObject(user, this.state.updateValues.studentListDelete))
+                      this.setState({
+                        updateValues: {
+                          ...this.state.updateValues,
+                          studentListDelete: [...this.state.updateValues.studentListDelete, user],
+                        },
+                      })
+                    else
+                      this.setState({
+                        updateValues: {
+                          ...this.state.updateValues,
+                          studentListDelete: this.state.updateValues.studentListDelete.filter(student => student._id !== user._id),
+                        },
+                      })
+                    break
+                  case 'deleteTeacher':
+                    if (!containsObject(user, this.state.updateValues.teacherListDelete))
+                      this.setState({
+                        updateValues: {
+                          ...this.state.updateValues,
+                          teacherListDelete: [...this.state.updateValues.teacherListDelete, user],
+                        },
+                      })
+                    else
+                      this.setState({
+                        updateValues: {
+                          ...this.state.updateValues,
+                          teacherListDelete: this.state.updateValues.teacherListDelete.filter(teacher => teacher._id !== user._id),
+                        },
+                      })
+                    break
+                  default:
+                    break
+                }
+              }}>+
+              </button>}
             </li>
           )
         })}
@@ -253,101 +341,79 @@ class Subjects extends Component {
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
+    if (this.state.loading) return (<div className='center'>LOADING...</div>)
 
     return (
-      <div className='row'>
-        <div className='col col-10 center'>
-          <h2>Subject list</h2>
-          <ul className='list-group'>
-            {this.state.subjectList.map(subject => {
-              return (
-                this.state.activeSubject !== subject._id ?
-                  <li className='list-group-item list-group-item-dark' key={subject._id}>
-                    <h5>Id: {subject._id}</h5>
-                    <h4>Name: {subject.name}</h4>
-                    <button onClick={() => this.deleteSubject(subject._id)} className='btn btn-danger'>X</button>
-                    <button onClick={() => this.editSubject(subject)} className='btn btn-info'>Edit</button>
-                    <div className='row'>
-                      <div className='col col-6 center'>
-                        Students:
-                        {this.renderUsers(subject.students)}
+      <div>
+        {(this.state.error) &&
+        <div className='alert alert-danger center' role='alert'>
+          Error: {this.state.error}
+        </div>}
+        <div className='row'>
+          <div className='col col-10 center'>
+            <h2>Subject list</h2>
+            <ul className='list-group'>
+              {this.state.subjectList.map(subject => {
+                return (
+                  this.state.activeSubject !== subject._id ?
+                    <li className='list-group-item list-group-item-dark' key={subject._id}>
+                      <h4>Name: {subject.name}</h4>
+                      <button onClick={() => this.deleteSubject(subject._id)} className='btn btn-danger'>X</button>
+                      <button onClick={() => this.editSubject(subject)} className='btn btn-info'>Edit</button>
+                      <div className='row'>
+                        <div className='col col-6 center'>
+                          <h4>Students:</h4>
+                          {this.renderUsers(subject.students)}
+                        </div>
+                        <div className='col col-6 center'>
+                          <h4>Teachers:</h4>
+                          {this.renderUsers(subject.teachers)}
+                        </div>
                       </div>
-                      <div className='col col-6 center'>
-                        Teachers:
-                        {this.renderUsers(subject.teachers)}
-                      </div>
-                    </div>
-                  </li> : <div>
-                    <form onSubmit={this.handleSubmitUpdate}>
-                      <label>
-                        Name:
-                        <input className='form-control' id='name' type='text' value={this.state.updateValues.name}
-                               onChange={this.handleChangeUpdate}/><br/>
-                      </label>
-                      <br/><input className='btn btn-success' type='submit' value='Submit'/>
-                      <button onClick={() => this.editSubject(subject)} className='btn btn-info'>Cancel</button>
-                    </form>
-                    <div className='row'>
-                      <div className='col col-1 center'>
-                        Students
-                      </div>
-                      <div className='col col-1 center'>
-                        Subject's students:
-                        {this.renderUsers(subject.students.filter(student => containsObject(student, this.state.updateValues.studentListDelete) === false), 'deleteStudent')}
-                      </div>
-                      <div className='col col-1 center'>
-                        Students to delete:
-                        {this.renderUsers(this.state.updateValues.studentListDelete, 'deleteStudentRevert')}
-                      </div>
-                      <div className='col col-1 center'>
-                        Students:
-                        {this.renderUsers(this.state.studentList.filter(student => containsObject(student, this.state.updateValues.studentListAdd) === false
-                          && containsObject(student, subject.students) === false), 'addStudent')}
-                      </div>
-                      <div className='col col-1 center'>
-                        Students to add:
-                        {this.renderUsers(this.state.updateValues.studentListAdd, 'addStudentRevert')}
-                      </div>
-                      <div className='col col-1 center'>
-                        Teachers
-                      </div>
-                      <div className='col col-1 center'>
-                        Subject's teachers:
-                        {this.renderUsers(subject.teachers.filter(teacher => containsObject(teacher, this.state.updateValues.teacherListDelete) === false), 'deleteTeacher')}
-                      </div>
-                      <div className='col col-1 center'>
-                        Teachers to delete:
-                        {this.renderUsers(this.state.updateValues.teacherListDelete, 'deleteTeacherRevert')}
-                      </div>
-                      <div className='col col-1 center'>
-                        Teachers:
-                        {this.renderUsers(this.state.teacherList.filter(teacher => containsObject(teacher, this.state.updateValues.teacherListAdd) === false
-                          && containsObject(teacher, subject.teachers) === false), 'addTeacher')}
-                      </div>
-                      <div className='col col-1 center'>
-                        Teachers to add:
-                        {this.renderUsers(this.state.updateValues.teacherListAdd, 'addTeacherRevert')}
+                    </li> : <div>
+                      <form onSubmit={this.handleSubmitUpdate}>
+                        <label>
+                          Name:
+                          <input className='form-control' id='name' type='text' value={this.state.updateValues.name}
+                                 onChange={this.handleChangeUpdate}/><br/>
+                        </label>
+                        <br/><input className='btn btn-success' type='submit' value='Submit'/>
+                        <button onClick={() => this.editSubject(subject)} className='btn btn-info'>Cancel</button>
+                      </form>
+                      <div className='row'>
+                        <div className='col col-3 center'>
+                          Subject's students:
+                          {this.renderUsers(subject.students, 'deleteStudent')}
+                        </div>
+                        <div className='col col-3 center'>
+                          Students:
+                          {this.renderUsers(this.state.studentList.filter(student => containsObject(student, subject.students) === false), 'addStudent')}
+                        </div>
+                        <div className='col col-3 center'>
+                          Subject's teachers:
+                          {this.renderUsers(subject.teachers, 'deleteTeacher')}
+                        </div>
+                        <div className='col col-3 center'>
+                          Teachers:
+                          {this.renderUsers(this.state.teacherList.filter(teacher => containsObject(teacher, subject.teachers) === false), 'addTeacher')}
+                        </div>
                       </div>
                     </div>
-                  </div>
-              )
-            })}
-          </ul>
-        </div>
-        <div className='col col-2 center'>
-          <h3>Add new subject:</h3>
-          <form onSubmit={this.handleSubmitPost}>
-            <label>
-              Name:
-              <input className='form-control' id='name' type='text' value={this.state.postValues.name}
-                     onChange={this.handleChangePost}/><br/>
-            </label>
-            <br/><input className='btn btn-success' type='submit' value='Submit'/>
-          </form>
+                )
+              })}
+            </ul>
+          </div>
+          <div className='col col-2 center'>
+            <h3>Add new subject:</h3>
+            <form onSubmit={this.handleSubmitPost}>
+              <label>
+                Name:
+                <input className='form-control' id='name' type='text' value={this.state.postValues.name}
+                       onChange={this.handleChangePost}/><br/>
+              </label>
+              <br/><input className='btn btn-success' type='submit' value='Submit'/>
+            </form>
+          </div>
         </div>
       </div>
     )

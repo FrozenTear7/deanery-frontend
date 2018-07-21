@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import fetchWithToken from '../helpers/fetchWithToken'
+import UserCard from './UserCard'
 
 class TeacherProfile extends Component {
   constructor (props) {
@@ -18,6 +19,7 @@ class TeacherProfile extends Component {
         note: '',
       },
       loading: false,
+      error: null,
       activeStudent: null,
       activeSubject: null,
       activeGrade: null,
@@ -30,9 +32,9 @@ class TeacherProfile extends Component {
   }
 
   fetchUser = () => {
-    this.setState({loading: true})
+    this.setState({loading: true, error: null})
 
-    fetchWithToken(`http://localhost:3001/teachers/${localStorage.getItem('userId')}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/teachers/${localStorage.getItem('userId')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -40,8 +42,19 @@ class TeacherProfile extends Component {
       },
     })
       .then(response => {
-        response.json().then(data => {
-          this.setState({user: data, loading: false})
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not fetch user')
+        }
+      })
+      .then(data => {
+        this.setState({user: data, loading: false})
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
   }
@@ -57,9 +70,10 @@ class TeacherProfile extends Component {
   handleSubmitPost (e) {
     this.setState({
       loading: true,
+      error: null,
     })
 
-    fetchWithToken(`http://localhost:3001/grades`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/grades`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -72,6 +86,13 @@ class TeacherProfile extends Component {
         subject: this.state.activeSubject,
       }),
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not add a grade')
+        }
+      })
       .then(() => {
         this.fetchUser()
         this.setState({
@@ -82,6 +103,12 @@ class TeacherProfile extends Component {
             student: '',
             subject: '',
           },
+        })
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
 
@@ -95,9 +122,10 @@ class TeacherProfile extends Component {
   handleSubmitUpdate (e) {
     this.setState({
       loading: true,
+      error: null,
     })
 
-    fetchWithToken(`http://localhost:3001/grades/${this.state.activeGrade}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/grades/${this.state.activeGrade}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -108,6 +136,13 @@ class TeacherProfile extends Component {
         ...this.state.updateValues,
       }),
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not edit the grade')
+        }
+      })
       .then(() => {
         this.fetchUser()
         this.setState({
@@ -116,6 +151,12 @@ class TeacherProfile extends Component {
             note: '',
           },
           activeGrade: '',
+        })
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
 
@@ -130,6 +171,10 @@ class TeacherProfile extends Component {
     else
       this.setState({
           activeSubject: null,
+          updateValues: {
+            value: '',
+            note: '',
+          },
         },
       )
   }
@@ -167,125 +212,141 @@ class TeacherProfile extends Component {
   }
 
   deleteGrade (id) {
-    this.setState({loading: true})
+    this.setState({loading: true, error: null})
 
-    fetchWithToken(`http://localhost:3001/grades/${id}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/grades/${id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
         'access-control-allow-origin': '*',
       },
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not delete the grade')
+        }
+      })
       .then(() => {
           this.fetchUser()
         },
       )
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
+      })
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
-
-    console.log(this.state)
+    if (this.state.loading) return (
+      <div className='center'>LOADING...</div>
+    )
 
     return (
-      <div className='row'>
-        <div className='col col-6 center'>
-          <div className='row'>
-            <div className='col col-6 center'>
-              <h5>Id: {this.state.user._id}</h5>
-              <h4>Name: {this.state.user.name}</h4>
-              <h4>Surname: {this.state.user.surname}</h4>
-              <h4>Index: {this.state.user.index}</h4>
-              <h4>Email: {this.state.user.email}</h4>
-            </div>
-            <div className='col col-6 center'>
-              {this.state.user.avatar && <img className='avatar' alt='Avatar' src={this.state.user.avatar}/>}
-            </div>
-          </div>
-        </div>
-        {this.state.user.subjects && <div className='col col-6 center'>
-          <h2>Subjects:</h2>
-          <ul className='list-group'>
-            {this.state.user.subjects.map(subject =>
-              <li className='list-group-item list-group-item-dark' key={subject._id}>
-                <h4>Subject: {subject.name}</h4>
-                <button className='btn btn-success' onClick={() => this.editSubject(subject)}>+</button>
-                {this.state.activeSubject === subject._id &&
-                <div>
-                  <h4>Students:</h4>
-                  <ul className='list-group'>
-                    {subject.students.map(student =>
-                      <li className='list-group-item list-group-item-secondary' key={student._id}>
-                        <h4>Name: {student.name}</h4>
-                        <h4>Surname: {student.name}</h4>
-                        <h4>Index: {student.index}</h4>
-                        <button className='btn btn-success' onClick={() => this.editStudent(student)}>+</button>
-                        {this.state.activeStudent === student._id &&
-                        <div>
-                          <form onSubmit={this.handleSubmitPost}>
-                            <label>
-                              Value:
-                              <input className='form-control' id='value' type='text'
-                                     value={this.state.postValues.value}
-                                     onChange={this.handleChangePost}/>
-                              Note:
-                              <input className='form-control' id='note' type='text'
-                                     value={this.state.postValues.note}
-                                     onChange={this.handleChangePost}/>
-                              {student.grades.filter(grade => grade.type === 2).length === 0 &&
-                              <div>
-                                Type:
-                                <select className='form-control' id='type'
-                                        value={this.state.postValues.type}
-                                        onChange={this.handleChangePost}>
-                                  <option value='1'>Normal</option>
-                                  <option value='2'>Final</option>
-                                </select>
-                              </div>}
-                            </label>
-                            <br/><input className='btn btn-success' type='submit' value='Submit'/>
-                          </form>
-
-                          <ul className='list-group'>
-                            {student.grades.filter(grade => grade.subject === subject._id).map(grade =>
-                              <li className='list-group-item list-group-item-secondary' key={grade._id}>
-                                {(this.state.activeGrade === grade._id) ? <form onSubmit={this.handleSubmitUpdate}>
-                                    <label>
-                                      Value: <input className='form-control' id='value' type='text'
-                                                    value={this.state.updateValues.value}
-                                                    onChange={this.handleChangeUpdate}/>
-                                      Note: <input className='form-control' id='note' type='text'
-                                                   value={this.state.updateValues.note}
-                                                   onChange={this.handleChangeUpdate}/>
-                                    </label>
-                                    <br/><input className='btn btn-success' type='submit' value='Submit'/>
-                                    <button className='btn btn-info'
-                                            onClick={() => this.setState({activeGrade: null})}>Cancel
-                                    </button>
-                                  </form>
-                                  : <div>
-                                    <h4>Grade: {grade.value}</h4>
-                                    <h4>Note: {grade.note}</h4>
-                                    {grade.type === 1 && <h4>Type: normal</h4>}
-                                    {grade.type === 2 && <h4>Type: final</h4>}
-                                    <button className='btn btn-danger' onClick={() => this.deleteGrade(grade._id)}>X
-                                    </button>
-                                    <button className='btn btn-info' onClick={() => this.editGrade(grade)}>Edit
-                                    </button>
-                                  </div>}
-                              </li>,
-                            )}
-                          </ul>
-                        </div>}
-                      </li>)}
-                  </ul>
-                </div>}
-              </li>)}
-          </ul>
+      <div>
+        {(this.state.error) &&
+        <div className='alert alert-danger center' role='alert'>
+          Error: {this.state.error}
         </div>}
+        <div className='row'>
+          <div className='col col-6 center'>
+            <UserCard user={this.state.user}/>
+          </div>
+          {this.state.user.subjects && <div className='col col-6 center'>
+            <h2>Subjects:</h2>
+            <ul className='list-group'>
+              {this.state.user.subjects.map(subject =>
+                <li className='list-group-item list-group-item-dark' key={subject._id}>
+                  <h4>Subject: {subject.name}</h4>
+                  <button className='btn btn-success' onClick={() => this.editSubject(subject)}>+</button>
+                  {this.state.activeSubject === subject._id &&
+                  <div>
+                    <h4>Students:</h4>
+                    <ul className='list-group'>
+                      {subject.students.map(student =>
+                        <li className='list-group-item list-group-item-secondary' key={student._id}>
+                          <div className='row'>
+                            <div
+                              className={student.grades.filter(grade => grade.type === 2 && grade.subject === this.state.activeSubject).length > 0
+                                ? 'col col-6 center' : 'col col-12 center'}>
+                              <UserCard user={student}/>
+                            </div>
+                            <div className='col col-6 center'>
+                              {student.grades.filter(grade => grade.type === 2 && grade.subject === this.state.activeSubject).length > 0 &&
+                              <div className='center jumbotron'>
+                                <h2>Final
+                                  grade: {student.grades.filter(grade => grade.type === 2 && grade.subject === this.state.activeSubject)[0].value}</h2>
+                              </div>}
+                            </div>
+                          </div>
+                          <button className='btn btn-success' onClick={() => this.editStudent(student)}>+</button>
+                          {this.state.activeStudent === student._id &&
+                          <div>
+                            <form onSubmit={this.handleSubmitPost}>
+                              <label>
+                                Value:
+                                <input className='form-control' id='value' type='text'
+                                       value={this.state.postValues.value}
+                                       onChange={this.handleChangePost}/>
+                                Note:
+                                <input className='form-control' id='note' type='text'
+                                       value={this.state.postValues.note}
+                                       onChange={this.handleChangePost}/>
+                                {student.grades.filter(grade => grade.type === 2 && grade.subject === this.state.activeSubject).length === 0 &&
+                                <div>
+                                  Type:
+                                  <select className='form-control' id='type'
+                                          value={this.state.postValues.type}
+                                          onChange={this.handleChangePost}>
+                                    <option value='1'>Normal</option>
+                                    <option value='2'>Final</option>
+                                  </select>
+                                </div>}
+                              </label>
+                              <br/><input className='btn btn-success' type='submit' value='Submit'/>
+                            </form>
+
+                            <ul className='list-group'>
+                              {student.grades.filter(grade => grade.subject === subject._id).map(grade =>
+                                <li className='list-group-item list-group-item-secondary' key={grade._id}>
+                                  {(this.state.activeGrade === grade._id) ? <form onSubmit={this.handleSubmitUpdate}>
+                                      <label>
+                                        Value: <input className='form-control' id='value' type='text'
+                                                      value={this.state.updateValues.value}
+                                                      onChange={this.handleChangeUpdate}/>
+                                        Note: <input className='form-control' id='note' type='text'
+                                                     value={this.state.updateValues.note}
+                                                     onChange={this.handleChangeUpdate}/>
+                                      </label>
+                                      <br/><input className='btn btn-success' type='submit' value='Submit'/>
+                                      <button className='btn btn-info'
+                                              onClick={() => this.setState({activeGrade: null})}>Cancel
+                                      </button>
+                                    </form>
+                                    : <div>
+                                      <h4>Grade: {grade.value}</h4>
+                                      <h4>Note: {grade.note}</h4>
+                                      {grade.type === 1 && <h4>Type: normal</h4>}
+                                      {grade.type === 2 && <h4>Type: final</h4>}
+                                      <button className='btn btn-danger' onClick={() => this.deleteGrade(grade._id)}>X
+                                      </button>
+                                      <button className='btn btn-info' onClick={() => this.editGrade(grade)}>Edit
+                                      </button>
+                                    </div>}
+                                </li>,
+                              )}
+                            </ul>
+                          </div>}
+                        </li>)}
+                    </ul>
+                  </div>}
+                </li>)}
+            </ul>
+          </div>}
+        </div>
       </div>
     )
   }

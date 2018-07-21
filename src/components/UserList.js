@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import fetchWithToken from '../helpers/fetchWithToken'
+import UserCard from './UserCard'
 
 class UserList extends Component {
   constructor (props) {
@@ -22,6 +23,7 @@ class UserList extends Component {
       },
       userList: [],
       loading: false,
+      error: null,
       activeUser: null,
       addFormActive: false,
     }
@@ -35,7 +37,7 @@ class UserList extends Component {
   fetchUsers = () => {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/${this.props.mode}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/${this.props.mode}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -43,8 +45,19 @@ class UserList extends Component {
       },
     })
       .then(response => {
-        response.json().then(data => {
-          this.setState({userList: data, loading: false})
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not fetch users')
+        }
+      })
+      .then(data => {
+        this.setState({userList: data, loading: false})
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
   }
@@ -52,17 +65,30 @@ class UserList extends Component {
   deleteUser (id) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/${this.props.mode}/${id}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/${this.props.mode}/${id}`, {
       method: 'DELETE',
       headers: {
         'Accept': 'application/json',
         'access-control-allow-origin': '*',
       },
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not delete the user')
+        }
+      })
       .then(() => {
           this.fetchUsers()
         },
       )
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
+      })
   }
 
   editUser (user) {
@@ -95,7 +121,7 @@ class UserList extends Component {
   handleSubmitPost (e) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/${this.props.mode}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/${this.props.mode}`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -104,6 +130,13 @@ class UserList extends Component {
       },
       body: JSON.stringify(this.state.postValues),
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not add user')
+        }
+      })
       .then(() => {
         this.fetchUsers()
         this.setState({
@@ -117,6 +150,12 @@ class UserList extends Component {
           },
         })
       })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
+      })
 
     e.preventDefault()
   }
@@ -128,7 +167,7 @@ class UserList extends Component {
   handleSubmitUpdate (e) {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/${this.props.mode}/${this.state.activeUser}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/${this.props.mode}/${this.state.activeUser}`, {
       method: 'PUT',
       headers: {
         'Accept': 'application/json',
@@ -137,6 +176,13 @@ class UserList extends Component {
       },
       body: JSON.stringify(this.state.updateValues),
     })
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not edit the user')
+        }
+      })
       .then(() => {
         this.setState({
           updateValues: {
@@ -150,112 +196,111 @@ class UserList extends Component {
         })
         this.fetchUsers()
       })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
+        })
+      })
 
     e.preventDefault()
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
-
-    console.log(this.state.userList)
+    if (this.state.loading) return (
+      <div className='center'>LOADING...</div>
+    )
 
     return (
       <div>
-        <h2>{this.props.mode.charAt(0).toUpperCase() + this.props.mode.substr(1)}</h2>
-
-        <br/>
-        <button className='btn btn-info' onClick={() => this.setState({addFormActive: !this.state.addFormActive})}>
-          Add new user
-        </button>
-        <br/>
-
-        {this.state.addFormActive && <div>
-          Add new:<br/>
-          <form onSubmit={this.handleSubmitPost}>
-            <div className="form-row">
-              <div className="form-group col-md-6">
-                Name: <input className='form-control' id='name' type='text' value={this.state.postValues.name}
-                             onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
-                Surname: <input className='form-control' id='surname' type='text' value={this.state.postValues.surname}
-                                onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
-                Index: <input className='form-control' id='index' type='text' value={this.state.postValues.index}
-                              onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
-                Password: <input className='form-control' id='password' type='text'
-                                 value={this.state.postValues.password}
-                                 onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
-                Email: <input className='form-control' id='email' type='text' value={this.state.postValues.email}
-                              onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-6">
-                Avatar: <input className='form-control' id='avatar' type='text' value={this.state.postValues.avatar}
-                               onChange={this.handleChangePost}/></div>
-              <div className="form-group col-md-12">
-                <br/><input className='btn btn-success' type='submit' value='Submit'/>
-              </div>
-            </div>
-          </form>
+        {(this.state.error) &&
+        <div className='alert alert-danger center' role='alert'>
+          Error: {this.state.error}
         </div>}
+        <div>
+          <h2>{this.props.mode.charAt(0).toUpperCase() + this.props.mode.substr(1)}</h2>
 
-        <ul className='list-group'>
-          {this.state.userList.map(user => {
-            return (
-              this.state.activeUser !== user._id ? <li className='list-group-item list-group-item-dark' key={user._id}>
-                <div className='row'>
-                  <div className='col col-6 center'>
-                    <h5>Id: {user._id}</h5>
-                    <h4>Name: {user.name}</h4>
-                    <h4>Surname: {user.surname}</h4>
-                    <h4>Index: {user.index}</h4>
-                    <h4>Email: {user.email}</h4>
-                  </div>
-                  <div className='col col-6 center'>
-                    Avatar:<br/>
-                    {user.avatar && <img className='avatar' alt='Avatar' src={user.avatar}/>}
-                  </div>
+          <br/>
+          <button className='btn btn-info' onClick={() => this.setState({addFormActive: !this.state.addFormActive})}>
+            Add new user
+          </button>
+          <br/>
+
+          {this.state.addFormActive && <div>
+            Add new:<br/>
+            <form onSubmit={this.handleSubmitPost}>
+              <div className='form-row'>
+                <div className='form-group col-md-6'>
+                  Name: <input className='form-control' id='name' type='text' value={this.state.postValues.name}
+                               onChange={this.handleChangePost}/></div>
+                <div className='form-group col-md-6'>
+                  Surname: <input className='form-control' id='surname' type='text'
+                                  value={this.state.postValues.surname}
+                                  onChange={this.handleChangePost}/></div>
+                <div className='form-group col-md-6'>
+                  Index: <input className='form-control' id='index' type='text' value={this.state.postValues.index}
+                                onChange={this.handleChangePost}/></div>
+                <div className='form-group col-md-6'>
+                  Password: <input className='form-control' id='password' type='text'
+                                   value={this.state.postValues.password}
+                                   onChange={this.handleChangePost}/></div>
+                <div className='form-group col-md-6'>
+                  Email: <input className='form-control' id='email' type='text' value={this.state.postValues.email}
+                                onChange={this.handleChangePost}/></div>
+                <div className='form-group col-md-6'>
+                  Avatar: <input className='form-control' id='avatar' type='text' value={this.state.postValues.avatar}
+                                 onChange={this.handleChangePost}/></div>
+                <div className='form-group col-md-12'>
+                  <br/><input className='btn btn-success' type='submit' value='Submit'/>
                 </div>
-                <button onClick={() => this.deleteUser(user._id)} className='btn btn-danger'>X</button>
-                <button onClick={() => this.editUser(user)} className='btn btn-info'>Edit</button>
-              </li> : <form onSubmit={this.handleSubmitUpdate}>
-                <div className="form-row">
-                  <div className="form-group col-md-6">
-                    Name:
-                    <input className='form-control' id='name' type='text' value={this.state.updateValues.name}
-                           onChange={this.handleChangeUpdate}/>
-                  </div>
-                  <div className="form-group col-md-6">
-                    Surname:
-                    <input className='form-control' id='surname' type='text'
-                           value={this.state.updateValues.surname}
-                           onChange={this.handleChangeUpdate}/>
-                  </div>
-                  <div className="form-group col-md-6">
-                    Index:
-                    <input className='form-control' id='index' type='text' value={this.state.updateValues.index}
-                           onChange={this.handleChangeUpdate}/>
-                  </div>
-                  <div className="form-group col-md-6">
-                    Email:
-                    <input className='form-control' id='email' type='text' value={this.state.updateValues.email}
-                           onChange={this.handleChangeUpdate}/>
-                  </div>
-                  <div className="form-group col-md-12">
-                    Avatar:
-                    <input className='form-control' id='avatar' type='text' value={this.state.updateValues.avatar}
-                           onChange={this.handleChangeUpdate}/>
-                    <br/><input className='btn btn-success' type='submit' value='Submit'/>
-                    <button onClick={() => this.editUser(user)} className='btn btn-info'>Cancel</button>
-                  </div>
-                </div>
-              </form>
-            )
-          })}
-        </ul>
+              </div>
+            </form>
+          </div>}
+
+          <ul className='list-group'>
+            {this.state.userList.map(user => {
+              return (
+                this.state.activeUser !== user._id ?
+                  <li className='list-group-item list-group-item-dark' key={user._id}>
+                    <UserCard user={user}/>
+                    <button onClick={() => this.deleteUser(user._id)} className='btn btn-danger'>X</button>
+                    <button onClick={() => this.editUser(user)} className='btn btn-info'>Edit</button>
+                  </li> : <form onSubmit={this.handleSubmitUpdate}>
+                    <div className='form-row'>
+                      <div className='form-group col-md-6'>
+                        Name:
+                        <input className='form-control' id='name' type='text' value={this.state.updateValues.name}
+                               onChange={this.handleChangeUpdate}/>
+                      </div>
+                      <div className='form-group col-md-6'>
+                        Surname:
+                        <input className='form-control' id='surname' type='text'
+                               value={this.state.updateValues.surname}
+                               onChange={this.handleChangeUpdate}/>
+                      </div>
+                      <div className='form-group col-md-6'>
+                        Index:
+                        <input className='form-control' id='index' type='text' value={this.state.updateValues.index}
+                               onChange={this.handleChangeUpdate}/>
+                      </div>
+                      <div className='form-group col-md-6'>
+                        Email:
+                        <input className='form-control' id='email' type='text' value={this.state.updateValues.email}
+                               onChange={this.handleChangeUpdate}/>
+                      </div>
+                      <div className='form-group col-md-12'>
+                        Avatar:
+                        <input className='form-control' id='avatar' type='text' value={this.state.updateValues.avatar}
+                               onChange={this.handleChangeUpdate}/>
+                        <br/><input className='btn btn-success' type='submit' value='Submit'/>
+                        <button onClick={() => this.editUser(user)} className='btn btn-info'>Cancel</button>
+                      </div>
+                    </div>
+                  </form>
+              )
+            })}
+          </ul>
+        </div>
       </div>
     )
   }

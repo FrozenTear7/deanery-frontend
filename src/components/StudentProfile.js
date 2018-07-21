@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import fetchWithToken from '../helpers/fetchWithToken'
+import UserCard from './UserCard'
 
 class StudentProfile extends Component {
   constructor (props) {
@@ -7,6 +8,7 @@ class StudentProfile extends Component {
     this.state = {
       user: {},
       loading: false,
+      error: null,
       activeSubject: null,
     }
   }
@@ -14,7 +16,7 @@ class StudentProfile extends Component {
   fetchUser = () => {
     this.setState({loading: true})
 
-    fetchWithToken(`http://localhost:3001/students/${localStorage.getItem('userId')}`, {
+    fetchWithToken(`https://frozentear7-deanery-example.herokuapp.com/students/${localStorage.getItem('userId')}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -22,8 +24,19 @@ class StudentProfile extends Component {
       },
     })
       .then(response => {
-        response.json().then(data => {
-          this.setState({user: data, loading: false})
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Could not fetch user\'s profile')
+        }
+      })
+      .then(data => {
+        this.setState({user: data, loading: false})
+      })
+      .catch(error => {
+        this.setState({
+          error: error.message,
+          loading: false,
         })
       })
   }
@@ -49,84 +62,78 @@ class StudentProfile extends Component {
   }
 
   render () {
-    if (this.state.loading)
-      return (
-        <div>LOADING...</div>
-      )
+    if (this.state.loading) return (
+      <div className='center'>LOADING...</div>
+    )
 
     return (
-      <div className='row'>
-        <div className='col col-6 center'>
-          <h1>Profile:</h1>
-          <div className='row'>
-            <div className='col col-6 center'>
-              <h5>Id: {this.state.user._id}</h5>
-              <h4>Name: {this.state.user.name}</h4>
-              <h4>Surname: {this.state.user.surname}</h4>
-              <h4>Index: {this.state.user.index}</h4>
-              <h4>Email: {this.state.user.email}</h4>
-            </div>
-            <div className='col col-6 center'>
-              Avatar:<br/>
-              {this.state.user.avatar && <img className='avatar' alt='Avatar' src={this.state.user.avatar}/>}
-            </div>
-          </div>
-        </div>
-        {this.state.user.grades && <div className='col col-6 center'>
-          <h2>Subjects:</h2>
-          <ul className='list-group'>
-            {this.state.user.subjects.map(subject =>
-              <li className='list-group-item list-group-item-dark' key={subject._id}>
-                <h3>Subject: {subject.name}
-                  <div className='dropdown'>
-                    <button className='btn btn-info-sm dropdown-toggle' type='button' id='dropdownTeachers'
-                            data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                      Teachers
-                    </button>
-                    <div className='dropdown-menu' aria-labelledby='dropdownTeachers'>
-                      <ul>
-                        {subject.teachers.map(teacher =>
-                          <li>
-                            <h5>{teacher.name + ' ' + teacher.surname}</h5>
-                            <a href={this.teacherEmail(teacher.email)}>Email the teacher</a>
-                          </li>)}
-                      </ul>
-                    </div>
-                  </div>
-                  <br/>
-
-                  <button className='btn btn-info-sm' onClick={() => this.selectSubject(subject)}>
-                    Grades:
-                    <span
-                      className='badge badge-pill badge-success'>{this.state.user.grades
-                      .filter(grade => grade.subject._id === subject._id).length}
-                    </span>
-                  </button>
-                </h3>
-                {this.state.activeSubject === subject._id &&
-                <div>
-                  <h4>Grades:</h4>
-                  <div className='row'>
-                    <div className='col col-5 center'>
-                      <ul className='list-group'>
-                        {this.state.user.grades.filter(grade => grade.subject._id === subject._id && grade.type === 1).map(grade =>
-                          <li className='list-group-item list-group-item-action list-group-item-secondary'
-                              key={grade._id}
-                              data-toggle='tooltip' data-placement='top' title={grade.note}>
-                            <h4>Grade: {grade.value}</h4>
-                          </li>)}
-                      </ul>
-                    </div>
-                    <div className='col col-3 center'>
-                    </div>
-                    <div className='col col-4 center jumbotron'>
-                      <h2>Final grade: {this.state.user.grades.filter(grade => grade.type === 2)[0].value || '-'}</h2>
-                    </div>
-                  </div>
-                </div>}
-              </li>)}
-          </ul>
+      <div>
+        {(this.state.error) &&
+        <div className='alert alert-danger center' role='alert'>
+          Error: {this.state.error}
         </div>}
+        <div className='row'>
+          <div className='col col-6 center'>
+            <UserCard user={this.state.user}/>
+          </div>
+          {this.state.user.grades && <div className='col col-6 center'>
+            <h2>Subjects:</h2>
+            <ul className='list-group'>
+              {this.state.user.subjects.map(subject =>
+                <li className='list-group-item list-group-item-dark' key={subject._id}>
+                  <h3>Subject: {subject.name}
+                    <div className='dropdown'>
+                      <button className='btn btn-info-sm dropdown-toggle' type='button' id='dropdownTeachers'
+                              data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        Teachers
+                      </button>
+                      <div className='dropdown-menu' aria-labelledby='dropdownTeachers'>
+                        <ul>
+                          {subject.teachers.map(teacher =>
+                            <li>
+                              <h5>{teacher.name + ' ' + teacher.surname}</h5>
+                              <a href={this.teacherEmail(teacher.email)}>Email the teacher</a>
+                            </li>)}
+                        </ul>
+                      </div>
+                    </div>
+                    <br/>
+
+                    <button className='btn btn-info-sm' onClick={() => this.selectSubject(subject)}>
+                      Grades:
+                      <span
+                        className='badge badge-pill badge-success'>{this.state.user.grades
+                        .filter(grade => grade.subject._id === subject._id).length}
+                    </span>
+                    </button>
+                  </h3>
+                  {this.state.activeSubject === subject._id &&
+                  <div>
+                    <h4>Grades:</h4>
+                    <div className='row'>
+                      <div className='col col-5 center'>
+                        <ul className='list-group'>
+                          {this.state.user.grades.filter(grade => grade.subject._id === subject._id && grade.type === 1).map(grade =>
+                            <li className='list-group-item list-group-item-action list-group-item-secondary'
+                                key={grade._id}
+                                data-toggle='tooltip' data-placement='top' title={grade.note}>
+                              <h4>Grade: {grade.value}</h4>
+                            </li>)}
+                        </ul>
+                      </div>
+                      <div className='col col-3 center'>
+                      </div>
+                      {this.state.user.grades.filter(grade => grade.type === 2 && grade.subject._id === this.state.activeSubject).length > 0 &&
+                      <div className='col col-4 center jumbotron'>
+                        <h2>Final
+                          grade: {this.state.user.grades.filter(grade => grade.type === 2 && grade.subject._id === this.state.activeSubject)[0].value}</h2>
+                      </div>}
+                    </div>
+                  </div>}
+                </li>)}
+            </ul>
+          </div>}
+        </div>
       </div>
     )
   }
